@@ -16,3 +16,6 @@ ishu/.env
 # General
 *.log
 .DS_Store
+.claude/
+**/__pycache__/
+**/*.pyc

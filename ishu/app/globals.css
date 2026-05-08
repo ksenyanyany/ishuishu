@@ -1,0 +1,10 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-astroneer: var(--font-astroneer);
+  --font-inter: var(--font-inter);
+}
+
+body {
+  font-family: var(--font-astroneer), sans-serif;
+}

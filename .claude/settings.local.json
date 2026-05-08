@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//mnt/c/Users/nanan/**)",
+      "Bash(dir \"C:\\\\Users\\\\nanan\\\\ISHUU\")",
+      "Bash(/c/Users/nanan/ISHUU/ishu_ishu/venv/Scripts/pip.exe list *)",
+      "Bash(cmd /c \"C:\\\\Users\\\\nanan\\\\ISHUU\\\\ishu_ishu\\\\venv\\\\Scripts\\\\pip.exe list\")",
+      "PowerShell(& \"C:\\\\Users\\\\nanan\\\\ISHUU\\\\ishu_ishu\\\\venv\\\\Scripts\\\\python.exe\" -m pip list 2>&1)",
+      "PowerShell(Start-Process -NoNewWindow powershell -ArgumentList \"-Command\", \"& 'C:\\\\Users\\\\nanan\\\\ISHUU\\\\ishu_ishu\\\\venv\\\\Scripts\\\\python.exe' 'C:\\\\Users\\\\nanan\\\\ISHUU\\\\ishu_ishu\\\\manage.py' runserver 2>&1 | Tee-Object -FilePath 'C:\\\\Users\\\\nanan\\\\ISHUU\\\\django.log'\")",
+      "mcp__Claude_in_Chrome__tabs_context_mcp",
+      "PowerShell(try { $r = Invoke-WebRequest -Uri \"http://localhost:8000/\" -TimeoutSec 3; Write-Host \"OK: $\\($r.StatusCode\\)\" } catch { Write-Host \"FAIL: $\\($_.Exception.Message\\)\" })"
+    ]
+  }
+}

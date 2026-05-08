@@ -1,0 +1,31 @@
+from django.urls import path
+from .views import (
+    home, register, login,
+    my_profile, my_followers, my_following, user_profile, follow_user,
+    posts_list, post_detail, like_post, post_comments, user_comments,
+    search,
+    chats_list, chat_messages, chat_read,
+    notifications_list, notifications_read,
+)
+
+urlpatterns = [
+    path('', home),
+    path('register/', register),
+    path('login/', login),
+    path('profile/', my_profile),
+    path('profile/followers/', my_followers),
+    path('profile/following/', my_following),
+    path('profile/<int:user_id>/', user_profile),
+    path('profile/<int:user_id>/follow/', follow_user),
+    path('posts/', posts_list),
+    path('posts/<int:post_id>/', post_detail),
+    path('posts/<int:post_id>/like/', like_post),
+    path('posts/<int:post_id>/comments/', post_comments),
+    path('profile/<int:user_id>/comments/', user_comments),
+    path('search/', search),
+    path('chats/', chats_list),
+    path('chats/<int:user_id>/', chat_messages),
+    path('chats/<int:user_id>/read/', chat_read),
+    path('notifications/', notifications_list),
+    path('notifications/read/', notifications_read),
+]

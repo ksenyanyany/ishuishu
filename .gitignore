@@ -1,0 +1,18 @@
+# Django
+ishu_ishu/venv/
+ishu_ishu/__pycache__/
+ishu_ishu/**/__pycache__/
+ishu_ishu/**/*.pyc
+ishu_ishu/db.sqlite3
+ishu_ishu/.env
+ishu_ishu/staticfiles/
+
+# Next.js
+ishu/node_modules/
+ishu/.next/
+ishu/.env.local
+ishu/.env
+
+# General
+*.log
+.DS_Store

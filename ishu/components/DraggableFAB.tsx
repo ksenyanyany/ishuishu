@@ -6,7 +6,7 @@ export default function FAB() {
   const router = useRouter();
   const pathname = usePathname();
 
-  if (pathname === '/create' || pathname.startsWith('/activity/chat/')) return null;
+  if (pathname === '/create' || pathname.startsWith('/activity/chat/') || pathname.startsWith('/post/')) return null;
 
   return (
     <button

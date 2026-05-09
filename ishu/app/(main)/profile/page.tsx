@@ -341,7 +341,7 @@ export default function ProfilePage() {
       ) : tab === 'posts' ? (
         posts.length > 0 ? (
           <div className="flex flex-col gap-4 pb-4">
-            {posts.map((post) => <PostCard key={post.id} post={post} />)}
+            {posts.map((post) => <PostCard key={post.id} post={post} onDelete={(id) => setPosts((prev) => prev.filter((p) => p.id !== id))} />)}
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center py-16 gap-2">

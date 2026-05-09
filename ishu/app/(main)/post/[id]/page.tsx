@@ -111,7 +111,7 @@ export default function PostPage() {
           <span className="text-base font-bold text-[#1F2A44]">Пост</span>
         </div>
 
-        <PostCard post={post} />
+        <PostCard post={post} onDelete={() => router.back()} />
 
         <div className="mt-4 mb-2">
           <span className="text-xs font-bold text-[#9AA3B8] uppercase tracking-wide">

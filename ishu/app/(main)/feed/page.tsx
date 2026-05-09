@@ -218,7 +218,7 @@ export default function FeedPage() {
         loading ? (
           <div className="flex justify-center py-16 text-sm text-[#9AA3B8]">Загрузка...</div>
         ) : posts.length > 0 ? (
-          posts.map((post) => <PostCard key={post.id} post={post} />)
+          posts.map((post) => <PostCard key={post.id} post={post} onDelete={(id) => setPosts((prev) => prev.filter((p) => p.id !== id))} />)
         ) : (
           <div className="flex flex-col items-center py-16 gap-2">
             <span className="text-2xl">·  ·  ·</span>

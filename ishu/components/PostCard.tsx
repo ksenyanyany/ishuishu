@@ -24,13 +24,27 @@ export type Post = {
   isLiked?: boolean;
 };
 
-export default function PostCard({ post }: { post: Post }) {
+export default function PostCard({ post, onDelete }: { post: Post; onDelete?: (id: string) => void }) {
   const [liked, setLiked] = useState(post.isLiked ?? false);
   const [likesCount, setLikesCount] = useState(post.likesCount);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   const currentUserId = typeof window !== 'undefined' ? localStorage.getItem('user_id') ?? '' : '';
   const isMyPost = post.authorId === currentUserId;
+
+  async function handleDelete() {
+    if (deleting) return;
+    setDeleting(true);
+    setMenuOpen(false);
+    const token = localStorage.getItem('token');
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/posts/${post.id}/`, {
+      method: 'DELETE',
+      headers: { Authorization: `Token ${token}` },
+    });
+    if (res.ok) onDelete?.(post.id);
+    else setDeleting(false);
+  }
 
   async function handleLike() {
     setLiked(!liked);
@@ -99,10 +113,11 @@ export default function PostCard({ post }: { post: Post }) {
                 </button>
                 <div className="h-px bg-[#EDEFF3]" />
                 <button
-                  className="w-full text-left px-4 py-3 text-sm text-red-400 hover:bg-[#F3F6FC]"
-                  onClick={() => setMenuOpen(false)}
+                  className="w-full text-left px-4 py-3 text-sm text-red-400 hover:bg-[#F3F6FC] disabled:opacity-40"
+                  onClick={handleDelete}
+                  disabled={deleting}
                 >
-                  Удалить пост
+                  {deleting ? 'Удаление...' : 'Удалить пост'}
                 </button>
               </>
             ) : (

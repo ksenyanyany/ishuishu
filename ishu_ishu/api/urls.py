@@ -2,7 +2,7 @@ from django.urls import path
 from .views import (
     home, register, login,
     my_profile, my_followers, my_following, user_profile, follow_user,
-    posts_list, post_detail, like_post, post_comments, like_comment, user_comments,
+    posts_list, post_detail, post_edit, like_post, post_comments, like_comment, user_comments,
     search,
     chats_list, chat_messages, chat_read,
     notifications_list, notifications_read,
@@ -19,6 +19,7 @@ urlpatterns = [
     path('profile/<int:user_id>/follow/', follow_user),
     path('posts/', posts_list),
     path('posts/<int:post_id>/', post_detail),
+    path('posts/<int:post_id>/edit/', post_edit),
     path('posts/<int:post_id>/like/', like_post),
     path('posts/<int:post_id>/comments/', post_comments),
     path('comments/<int:comment_id>/like/', like_comment),

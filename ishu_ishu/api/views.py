@@ -278,7 +278,7 @@ def posts_list(request):
     return Response(_post_data(post, viewer=request.user), status=201)
 
 
-@api_view(['GET', 'PATCH', 'DELETE'])  # v2
+@api_view(['GET', 'PATCH', 'DELETE'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def post_detail(request, post_id):
@@ -303,6 +303,27 @@ def post_detail(request, post_id):
 
     post.delete()
     return Response(status=204)
+
+
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def post_edit(request, post_id):
+    """Fallback POST-based edit endpoint (in case PATCH is blocked by proxy)."""
+    try:
+        post = Post.objects.select_related('author__profile').prefetch_related('likes', 'comments').get(id=post_id)
+    except Post.DoesNotExist:
+        return Response({'error': 'Пост не найден'}, status=404)
+
+    if post.author != request.user:
+        return Response({'error': 'Нет прав'}, status=403)
+
+    if 'text' in request.data:
+        post.text = request.data['text'].strip()[:500]
+    if 'moods' in request.data:
+        post.moods = request.data['moods']
+    post.save()
+    return Response(_post_data(post, viewer=request.user))
 
 
 @api_view(['POST'])

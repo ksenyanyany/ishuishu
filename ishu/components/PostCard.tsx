@@ -64,8 +64,8 @@ export default function PostCard({ post, onDelete }: { post: Post; onDelete?: (i
     if (!editText.trim() || saving) return;
     setSaving(true);
     const token = localStorage.getItem('token');
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/posts/${post.id}/`, {
-      method: 'PATCH',
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/posts/${post.id}/edit/`, {
+      method: 'POST',
       headers: { Authorization: `Token ${token}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({ text: editText.trim(), moods: editMoods }),
     });

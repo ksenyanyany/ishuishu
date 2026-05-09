@@ -278,7 +278,7 @@ def posts_list(request):
     return Response(_post_data(post, viewer=request.user), status=201)
 
 
-@api_view(['GET', 'PATCH', 'DELETE'])
+@api_view(['GET', 'PATCH', 'DELETE'])  # v2
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def post_detail(request, post_id):

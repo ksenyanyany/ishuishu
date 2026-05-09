@@ -40,6 +40,25 @@ CORS_ALLOWED_ORIGINS = os.environ.get(
     'http://localhost:3000'
 ).split(',')
 
+CORS_ALLOW_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+]
+
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'origin',
+    'x-csrftoken',
+    'x-requested-with',
+]
+
 ROOT_URLCONF = 'ishu_ishu.urls'
 
 TEMPLATES = [

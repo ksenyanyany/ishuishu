@@ -20,14 +20,19 @@ export type Comment = {
   isLiked?: boolean;
 };
 
-const currentUserId = 'user_1';
-
-export default function CommentCard({ comment }: { comment: Comment }) {
+export default function CommentCard({
+  comment,
+  onReply,
+}: {
+  comment: Comment;
+  onReply?: (comment: Comment) => void;
+}) {
   const [liked, setLiked] = useState(comment.isLiked ?? false);
   const [likesCount, setLikesCount] = useState(comment.likesCount);
   const [menuOpen, setMenuOpen] = useState(false);
   const [lightboxImg, setLightboxImg] = useState<string | null>(null);
 
+  const currentUserId = typeof window !== 'undefined' ? localStorage.getItem('user_id') ?? '' : '';
   const isMyComment = comment.authorId === currentUserId;
 
   const timeAgo = formatDistanceToNow(new Date(comment.createdAt), {
@@ -35,9 +40,14 @@ export default function CommentCard({ comment }: { comment: Comment }) {
     locale: ru,
   });
 
-  function handleLike() {
+  async function handleLike() {
     setLiked(!liked);
     setLikesCount(liked ? likesCount - 1 : likesCount + 1);
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/comments/${comment.id}/like/`, {
+      method: 'POST',
+      headers: { Authorization: `Token ${token}` },
+    });
   }
 
   return (
@@ -99,12 +109,9 @@ export default function CommentCard({ comment }: { comment: Comment }) {
               <div className={`mt-2 grid gap-1.5 ${
                 comment.images.length === 1
                   ? 'grid-cols-1'
-                  : comment.images.length === 2
-                  ? 'grid-cols-2'
                   : 'grid-cols-2'
               }`}>
                 {comment.images.map((src, i) => {
-                  // третья фотка на всю ширину если нечётное кол-во
                   const isLastOdd =
                     comment.images!.length % 2 !== 0 &&
                     i === comment.images!.length - 1;
@@ -130,22 +137,29 @@ export default function CommentCard({ comment }: { comment: Comment }) {
             )}
           </div>
 
-          {/* Лайк под пузырём */}
-          <button
-            onClick={handleLike}
-            className="flex items-center gap-1 mt-1.5 ml-1"
-          >
-            <Image
-              src={liked ? '/icons/like.svg' : '/icons/notlike.svg'}
-              alt="лайк"
-              width={14}
-              height={14}
-              style={{ width: 'auto' }}
-            />
-            <span className={`text-xs ${liked ? 'text-[#B06B8A]' : 'text-[#9AA3B8]'}`}>
-              {likesCount > 0 ? likesCount : ''}
-            </span>
-          </button>
+          {/* Лайк + ответить */}
+          <div className="flex items-center gap-3 mt-1.5 ml-1">
+            <button onClick={handleLike} className="flex items-center gap-1">
+              <Image
+                src={liked ? '/icons/like.svg' : '/icons/notlike.svg'}
+                alt="лайк"
+                width={14}
+                height={14}
+                style={{ width: 'auto' }}
+              />
+              <span className={`text-xs ${liked ? 'text-[#B06B8A]' : 'text-[#9AA3B8]'}`}>
+                {likesCount > 0 ? likesCount : ''}
+              </span>
+            </button>
+            {onReply && (
+              <button
+                onClick={() => onReply(comment)}
+                className="text-xs text-[#9AA3B8] font-medium"
+              >
+                Ответить
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Меню */}

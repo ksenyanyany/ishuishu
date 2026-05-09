@@ -1,16 +1,31 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
+
+type ReplyTo = {
+  name: string;
+  text: string;
+};
 
 type Props = {
   onSubmit: (text: string, images: string[]) => void;
+  replyTo?: ReplyTo | null;
+  onCancelReply?: () => void;
 };
 
-export default function CommentInput({ onSubmit }: Props) {
+export default function CommentInput({ onSubmit, replyTo, onCancelReply }: Props) {
   const [text, setText] = useState('');
   const [images, setImages] = useState<string[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Фокус при появлении ответа
+  useEffect(() => {
+    if (replyTo) {
+      textareaRef.current?.focus();
+    }
+  }, [replyTo]);
 
   function handleImage(e: React.ChangeEvent<HTMLInputElement>) {
     const files = Array.from(e.target.files ?? []);
@@ -26,9 +41,11 @@ export default function CommentInput({ onSubmit }: Props) {
 
   function handleSend() {
     if (!text.trim() && images.length === 0) return;
-    onSubmit(text.trim(), images);
+    const finalText = replyTo ? `@${replyTo.name} ${text.trim()}` : text.trim();
+    onSubmit(finalText, images);
     setText('');
     setImages([]);
+    onCancelReply?.();
   }
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
@@ -41,6 +58,26 @@ export default function CommentInput({ onSubmit }: Props) {
   return (
     <div className="fixed bottom-0 left-0 right-0 z-30 bg-transparent">
       <div className="w-full px-4 pt-2 pb-24">
+
+        {/* Баннер "отвечаю на..." */}
+        {replyTo && (
+          <div className="flex items-center gap-2 mb-2 px-1">
+            <div className="flex-1 min-w-0 bg-[#EDEFF3] rounded-xl px-3 py-1.5 border-l-2 border-[#6B7FA8]">
+              <span className="text-xs font-semibold text-[#6B7FA8]">
+                {replyTo.name}
+              </span>
+              <p className="text-xs text-[#9AA3B8] truncate">{replyTo.text}</p>
+            </div>
+            <button
+              onClick={onCancelReply}
+              className="w-6 h-6 rounded-full bg-[#EDEFF3] flex items-center justify-center shrink-0"
+            >
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+                <path d="M1 1L9 9M9 1L1 9" stroke="#9AA3B8" strokeWidth="1.5" strokeLinecap="round"/>
+              </svg>
+            </button>
+          </div>
+        )}
 
         {/* Превью прикреплённых фото */}
         {images.length > 0 && (
@@ -84,8 +121,9 @@ export default function CommentInput({ onSubmit }: Props) {
           {/* Текстовое поле */}
           <div className="flex-1 bg-[#EDEFF3] rounded-2xl px-4 py-2.5 flex items-end gap-2">
             <textarea
+              ref={textareaRef}
               className="flex-1 bg-transparent outline-none text-sm text-[#1F2A44] placeholder:text-[#9AA3B8] resize-none max-h-28 leading-relaxed"
-              placeholder="Напиши комментарий..."
+              placeholder={replyTo ? `Ответить ${replyTo.name}...` : 'Напиши комментарий...'}
               rows={1}
               value={text}
               onChange={(e) => {

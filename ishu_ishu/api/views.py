@@ -363,6 +363,24 @@ def post_comments(request, post_id):
     return Response(_comment_data(comment, viewer=request.user), status=201)
 
 
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def like_comment(request, comment_id):
+    try:
+        comment = Comment.objects.get(id=comment_id)
+    except Comment.DoesNotExist:
+        return Response({'error': 'Комментарий не найден'}, status=404)
+
+    if comment.likes.filter(id=request.user.id).exists():
+        comment.likes.remove(request.user)
+    else:
+        comment.likes.add(request.user)
+
+    return Response({'liked': comment.likes.filter(id=request.user.id).exists(),
+                     'likes_count': comment.likes.count()})
+
+
 # ── User comments (replies tab) ───────────────────────────────────────────────
 
 @api_view(['GET'])

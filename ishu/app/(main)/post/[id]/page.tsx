@@ -53,6 +53,7 @@ export default function PostPage() {
   const [post, setPost] = useState<Post | null>(null);
   const [comments, setComments] = useState<Comment[]>([]);
   const [loading, setLoading] = useState(true);
+  const [replyTo, setReplyTo] = useState<{ name: string; text: string } | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -81,6 +82,10 @@ export default function PostPage() {
       setComments((prev) => [...prev, mapComment(data)]);
       setPost((p) => p ? { ...p, commentsCount: p.commentsCount + 1 } : p);
     }
+  }
+
+  function handleReply(comment: Comment) {
+    setReplyTo({ name: comment.author.name, text: comment.text });
   }
 
   if (loading) {
@@ -121,7 +126,7 @@ export default function PostPage() {
 
         <div className="flex flex-col divide-y divide-[#DDE3EC]">
           {comments.map((comment) => (
-            <CommentCard key={comment.id} comment={comment} />
+            <CommentCard key={comment.id} comment={comment} onReply={handleReply} />
           ))}
           {comments.length === 0 && (
             <div className="flex flex-col items-center py-10 gap-2">
@@ -132,7 +137,11 @@ export default function PostPage() {
       </div>
 
       <div className="sticky bottom-0">
-        <CommentInput onSubmit={handleNewComment} />
+        <CommentInput
+          onSubmit={handleNewComment}
+          replyTo={replyTo}
+          onCancelReply={() => setReplyTo(null)}
+        />
       </div>
     </div>
   );

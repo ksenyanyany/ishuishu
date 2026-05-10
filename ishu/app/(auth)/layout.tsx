@@ -1,7 +1,7 @@
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
     <div
-      className="min-h-screen w-full flex"
+      className="min-h-screen w-full flex items-center justify-center px-4 py-8 lg:justify-end lg:pr-24 xl:pr-40"
       style={{
         backgroundImage: "url('/bg.svg')",
         backgroundPosition: "center",
@@ -9,21 +9,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         backgroundSize: "cover",
       }}
     >
-      {/* Десктоп: левая декоративная колонка */}
-      <div className="hidden lg:flex flex-1 flex-col items-center justify-center px-16 gap-4">
-        <h1
-          className="text-8xl text-[#1F2A44] select-none"
-          style={{ fontFamily: 'var(--font-astroneer)' }}
-        >
-          ishu.
-        </h1>
-        <p className="text-xl text-[#4B5563] text-center max-w-xs">
-          место, где важны эмоции
-        </p>
-      </div>
-
-      {/* Форма — по центру на мобайле, справа на десктопе */}
-      <div className="flex-1 flex items-center justify-center px-6 py-8 lg:max-w-lg lg:flex-none">
+      <div className="w-full max-w-sm">
         {children}
       </div>
     </div>

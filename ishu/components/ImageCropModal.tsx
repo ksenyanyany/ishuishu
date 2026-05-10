@@ -180,6 +180,7 @@ export default function ImageCropModal({ src, cropType, onConfirm, onCancel }: P
                 top: pan.y,
                 width: natW * scale,
                 height: natH * scale,
+                maxWidth: 'none',
                 pointerEvents: 'none',
                 visibility: ready ? 'visible' : 'hidden',
               }}

@@ -12,4 +12,3 @@ body {
 }
 
 :root { --bg-main: url('/bg2.svg'); }
-.dark { --bg-main: none; }

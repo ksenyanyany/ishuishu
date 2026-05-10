@@ -257,13 +257,13 @@ export default function ProfilePage() {
               onClick={() => setProfileShareOpen(true)}
               className="w-8 h-8 rounded-full bg-black/30 backdrop-blur-sm flex items-center justify-center"
             >
-              <Image src="/icons/share.svg" alt="поделиться профилем" width={16} height={16} style={{ width: 'auto' }} />
+              <Image src="/icons/share.svg" alt="поделиться профилем" width={16} height={16} style={{ width: 'auto', filter: 'brightness(0) invert(1)' }} />
             </button>
             <button
               onClick={() => coverInputRef.current?.click()}
               className="w-8 h-8 rounded-full bg-black/30 backdrop-blur-sm flex items-center justify-center"
             >
-              <Image src="/icons/image.svg" alt="изменить обложку" width={16} height={16} style={{ width: 'auto' }} />
+              <Image src="/icons/image.svg" alt="изменить обложку" width={16} height={16} style={{ width: 'auto', filter: 'brightness(0) invert(1)' }} />
             </button>
           </div>
         </div>

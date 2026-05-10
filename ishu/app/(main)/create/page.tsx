@@ -57,11 +57,11 @@ export default function CreatePage() {
       <div className="flex items-center justify-between pt-14 pb-4">
         <button
           onClick={() => router.back()}
-          className="w-9 h-9 rounded-full bg-[#EDEFF3] flex items-center justify-center"
+          className="w-9 h-9 rounded-full bg-[#EDEFF3] dark:bg-[#1C2438] flex items-center justify-center"
         >
           <Image src="/icons/back.svg" alt="назад" width={16} height={16} style={{ width: 'auto' }} />
         </button>
-        <span className="text-base font-bold text-[#1F2A44]">Новый пост</span>
+        <span className="text-base font-bold text-[#1F2A44] dark:text-[#E4EAF5]">Новый пост</span>
         <button
           onClick={handlePublish}
           className="px-4 py-2 rounded-xl bg-[#8E9BB5] text-white text-sm font-bold"
@@ -72,15 +72,15 @@ export default function CreatePage() {
 
       {/* Автор */}
       <div className="flex items-center gap-3 mb-4">
-        <div className="w-10 h-10 rounded-full bg-[#C5CEDC] flex items-center justify-center shrink-0">
+        <div className="w-10 h-10 rounded-full bg-[#C5CEDC] dark:bg-[#252F45] flex items-center justify-center shrink-0">
           <span className="text-sm font-bold text-[#4B5563]">Я</span>
         </div>
-        <span className="text-sm font-bold text-[#1F2A44]">Вы</span>
+        <span className="text-sm font-bold text-[#1F2A44] dark:text-[#E4EAF5]">Вы</span>
       </div>
 
       {/* Текст */}
       <textarea
-        className="w-full bg-transparent outline-none text-sm text-[#1F2A44] placeholder:text-[#9AA3B8] resize-none mb-1"
+        className="w-full bg-transparent outline-none text-sm text-[#1F2A44] dark:text-[#E4EAF5] placeholder:text-[#9AA3B8] resize-none mb-1"
         placeholder="Что ты чувствуешь прямо сейчас?.."
         rows={5}
         maxLength={500}
@@ -91,7 +91,7 @@ export default function CreatePage() {
         {text.length} / 500
       </div>
 
-      <div className="h-px bg-[#DDE3EC] mb-4" />
+      <div className="h-px bg-[#DDE3EC] dark:bg-[#252F45] mb-4" />
 
       {/* Настроение */}
       <span className="text-xs font-bold text-[#9AA3B8] uppercase tracking-wide mb-3">
@@ -104,12 +104,10 @@ export default function CreatePage() {
             <button
               key={mood.label}
               onClick={() => toggleMood(mood.label)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-semibold border transition-all"
-              style={
-                selected
-                  ? { background: mood.color, borderColor: mood.color, color: 'white' }
-                  : { background: 'transparent', borderColor: '#DDE3EC', color: '#5A6878' }
-              }
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-semibold border transition-all ${
+                selected ? '' : 'border-[#DDE3EC] dark:border-[#252F45] text-[#5A6878] dark:text-[#9AA3B8]'
+              }`}
+              style={selected ? { background: mood.color, borderColor: mood.color, color: 'white' } : {}}
             >
               <div
                 className="w-2 h-2 rounded-full shrink-0 mt-px"
@@ -121,7 +119,7 @@ export default function CreatePage() {
         })}
       </div>
 
-      <div className="h-px bg-[#DDE3EC] mb-4" />
+      <div className="h-px bg-[#DDE3EC] dark:bg-[#252F45] mb-4" />
 
       {/* Фото */}
       <span className="text-xs font-bold text-[#9AA3B8] uppercase tracking-wide mb-3">
@@ -141,7 +139,7 @@ export default function CreatePage() {
         ))}
 
         {/* Кнопка добавить — всегда видна */}
-        <label className="w-20 h-20 rounded-xl border-2 border-dashed border-[#C5CEDC] flex flex-col items-center justify-center gap-1 cursor-pointer shrink-0">
+        <label className="w-20 h-20 rounded-xl border-2 border-dashed border-[#C5CEDC] dark:border-[#252F45] flex flex-col items-center justify-center gap-1 cursor-pointer shrink-0">
           <Image src="/icons/plus-gray.svg" alt="добавить" width={22} height={22} style={{ width: 'auto' }} />
           <span className="text-xs text-[#9AA3B8]">Добавить</span>
           <input type="file" accept="image/*" className="hidden" onChange={handleImage} />

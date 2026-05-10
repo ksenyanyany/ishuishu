@@ -37,6 +37,7 @@ export default function PostCard({ post, onDelete }: { post: Post; onDelete?: (i
   const [currentText, setCurrentText] = useState(post.text);
   const [currentMoods, setCurrentMoods] = useState<string[]>(post.moods);
   const [saving, setSaving] = useState(false);
+  const [lightboxImg, setLightboxImg] = useState<string | null>(null);
 
   const currentUserId = typeof window !== 'undefined' ? localStorage.getItem('user_id') ?? '' : '';
   const isMyPost = post.authorId === currentUserId;
@@ -140,7 +141,10 @@ export default function PostCard({ post, onDelete }: { post: Post; onDelete?: (i
 
         {/* Фото */}
         {post.image && (
-          <div className="w-full aspect-[4/3] relative">
+          <div
+            className="w-full aspect-[4/3] relative cursor-pointer"
+            onClick={() => setLightboxImg(post.image!)}
+          >
             <Image src={post.image} alt="пост" fill className="object-cover" />
           </div>
         )}
@@ -218,6 +222,21 @@ export default function PostCard({ post, onDelete }: { post: Post; onDelete?: (i
             </div>
           </div>
         </>
+      )}
+
+      {/* Lightbox */}
+      {lightboxImg && (
+        <div
+          className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4"
+          onClick={() => setLightboxImg(null)}
+        >
+          <img
+            src={lightboxImg}
+            alt="просмотр"
+            className="max-w-full max-h-full rounded-xl object-contain"
+            style={{ maxWidth: '100vw', maxHeight: '100vh' }}
+          />
+        </div>
       )}
     </>
   );

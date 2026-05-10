@@ -56,7 +56,7 @@ export default function CommentInput({ onSubmit, replyTo, onCancelReply }: Props
   }
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-30 bg-transparent">
+    <div className="fixed bottom-0 left-0 right-0 lg:left-64 z-30 bg-transparent">
       <div className="w-full px-4 pt-2 pb-24">
 
         {/* Баннер "отвечаю на..." */}

@@ -31,7 +31,9 @@ export default function CommentInput({ onSubmit, replyTo, onCancelReply }: Props
   function handleImage(e: React.ChangeEvent<HTMLInputElement>) {
     const files = Array.from(e.target.files ?? []);
     files.forEach((file) => {
-      setImages((prev) => [...prev, URL.createObjectURL(file)]);
+      const reader = new FileReader();
+      reader.onload = (ev) => setImages((prev) => [...prev, ev.target?.result as string]);
+      reader.readAsDataURL(file);
     });
     if (inputRef.current) inputRef.current.value = '';
   }
@@ -86,7 +88,8 @@ export default function CommentInput({ onSubmit, replyTo, onCancelReply }: Props
           <div className="flex gap-2 mb-2 flex-wrap">
             {images.map((src, i) => (
               <div key={i} className="relative w-16 h-16 rounded-xl overflow-hidden shrink-0">
-                <Image src={src} alt="фото" fill className="object-cover" />
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={src} alt="фото" className="w-full h-full object-cover" />
                 <button
                   onClick={() => removeImage(i)}
                   className="absolute top-0.5 right-0.5 w-5 h-5 rounded-full bg-black/50 flex items-center justify-center"

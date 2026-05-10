@@ -15,6 +15,10 @@ def home(request):
     return JsonResponse({"message": "API works"})
 
 
+def ping(request):
+    return JsonResponse({"ok": True})
+
+
 # ── helpers ───────────────────────────────────────────────────────────────────
 
 def _make_handle(username):

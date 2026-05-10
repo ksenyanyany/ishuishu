@@ -100,12 +100,14 @@ export default function ProfilePage() {
         setProfile(data);
         if (data.avatar) setAvatarUrl(data.avatar);
         if (data.cover) setCoverUrl(data.cover);
+        setLoading(false);
 
-        const postsRes = await apiFetch(`/api/posts/?author_id=${data.id}`);
-        if (postsRes.ok) {
-          const raw = await postsRes.json();
-          setPosts(Array.isArray(raw) ? raw.map(mapPost) : []);
-        }
+        // Load posts in background after profile is shown
+        apiFetch(`/api/posts/?author_id=${data.id}`)
+          .then((r) => r.ok ? r.json() : [])
+          .then((raw) => setPosts(Array.isArray(raw) ? raw.map(mapPost) : []))
+          .catch(() => {});
+        return;
       }
     } finally {
       setLoading(false);

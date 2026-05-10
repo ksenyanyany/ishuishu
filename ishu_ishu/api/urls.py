@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import (
-    home, register, login,
+    home, ping, register, login,
     my_profile, my_followers, my_following, user_profile, follow_user,
     posts_list, post_detail, post_edit, like_post, post_comments, like_comment, user_comments,
     search,
@@ -10,6 +10,7 @@ from .views import (
 
 urlpatterns = [
     path('', home),
+    path('ping/', ping),
     path('register/', register),
     path('login/', login),
     path('profile/', my_profile),

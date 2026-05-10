@@ -20,12 +20,23 @@ export default function Sidebar() {
   const [handle, setHandle] = useState('');
 
   useEffect(() => {
-    async function load() {
+    async function loadProfile() {
       try {
-        const [notifsRes, chatsRes, profileRes] = await Promise.all([
+        const profileRes = await fetch(`${API}/api/profile/`, { headers: authHeaders() });
+        if (profileRes.ok) {
+          const p = await profileRes.json();
+          if (p.avatar) setAvatar(p.avatar);
+          if (p.name) setName(p.name);
+          if (p.handle) setHandle(p.handle);
+        }
+      } catch { /* ignore */ }
+    }
+
+    async function loadBadges() {
+      try {
+        const [notifsRes, chatsRes] = await Promise.all([
           fetch(`${API}/api/notifications/`, { headers: authHeaders() }),
           fetch(`${API}/api/chats/`, { headers: authHeaders() }),
-          fetch(`${API}/api/profile/`, { headers: authHeaders() }),
         ]);
         let total = 0;
         if (notifsRes.ok) {
@@ -36,17 +47,15 @@ export default function Sidebar() {
           const chats = await chatsRes.json();
           total += chats.reduce((s: number, c: { unread_count: number }) => s + (c.unread_count > 0 ? 1 : 0), 0);
         }
-        if (profileRes.ok) {
-          const p = await profileRes.json();
-          if (p.avatar) setAvatar(p.avatar);
-          if (p.name) setName(p.name);
-          if (p.handle) setHandle(p.handle);
-        }
         setBadgeCount(total);
       } catch { /* ignore */ }
     }
-    load();
-  }, [pathname]);
+
+    loadProfile();
+    loadBadges();
+    const interval = setInterval(loadBadges, 60_000);
+    return () => clearInterval(interval);
+  }, []);
 
   const isActive = (path: string) =>
     path === '/feed' ? pathname === path : pathname === path || pathname.startsWith(path + '/');

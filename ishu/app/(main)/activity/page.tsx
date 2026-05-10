@@ -203,47 +203,61 @@ export default function ActivityPage() {
           ) : (
             <div className="bg-[#EDEFF3] dark:bg-[#161C2A] rounded-2xl overflow-hidden">
               {notifs.map((n, i) => {
-                const inner = (
-                  <div className={`flex items-center gap-3 px-4 py-3 ${!n.is_read ? 'bg-[#E6EAF2] dark:bg-[#1C2438]' : ''}`}>
-                    <div className="relative shrink-0">
-                      <Avatar name={n.actor.name} avatar={n.actor.avatar} size={10} />
-                      <div className={`absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full flex items-center justify-center ${n.type === 'like' ? 'bg-[#B06B8A]' : n.type === 'comment' ? 'bg-[#6B7FA8]' : 'bg-[#7A9E7E]'}`}>
-                        {n.type === 'like' ? (
-                          <svg width="8" height="8" viewBox="0 0 14 14" fill="white">
-                            <path d="M7 12S1 8 1 4.5A3.5 3.5 0 0 1 7 2.5 3.5 3.5 0 0 1 13 4.5C13 8 7 12 7 12Z" />
-                          </svg>
-                        ) : n.type === 'comment' ? (
-                          <svg width="8" height="8" viewBox="0 0 14 14" fill="white">
-                            <path d="M2 2h10v8H8l-3 2v-2H2z" />
-                          </svg>
-                        ) : (
-                          <svg width="8" height="8" viewBox="0 0 14 14" fill="white">
-                            <path d="M7 1a6 6 0 100 12A6 6 0 007 1zm0 2a2 2 0 110 4 2 2 0 010-4zm0 8a4 4 0 01-3.4-1.9C4.7 8.4 6.2 8 7 8s2.3.4 3.4 1.1A4 4 0 017 11z" />
-                          </svg>
-                        )}
-                      </div>
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm text-[#1F2A44] dark:text-[#E4EAF5] leading-snug">
-                        <span className="font-semibold">{n.actor.name}</span>
-                        {notifText(n)}
-                        {n.post_text && <span className="text-[#9AA3B8]"> «{n.post_text}»</span>}
-                      </p>
-                      <span className="text-xs text-[#9AA3B8]">
-                        {formatDistanceToNow(new Date(n.created_at), { addSuffix: true, locale: ru })}
-                      </span>
-                    </div>
-                    {!n.is_read && <div className="w-2 h-2 rounded-full bg-[#B06B8A] shrink-0" />}
-                  </div>
-                );
+                const badgeColor =
+                  n.type === 'like' ? 'bg-[#B06B8A]' :
+                  n.type === 'comment' || n.type === 'reply' ? 'bg-[#6B7FA8]' :
+                  n.type === 'mention' ? 'bg-[#C09060]' :
+                  'bg-[#7A9E7E]';
+
+                const badgeIcon =
+                  n.type === 'like' ? (
+                    <svg width="8" height="8" viewBox="0 0 14 14" fill="white"><path d="M7 12S1 8 1 4.5A3.5 3.5 0 0 1 7 2.5 3.5 3.5 0 0 1 13 4.5C13 8 7 12 7 12Z" /></svg>
+                  ) : n.type === 'comment' || n.type === 'reply' ? (
+                    <svg width="8" height="8" viewBox="0 0 14 14" fill="white"><path d="M2 2h10v8H8l-3 2v-2H2z" /></svg>
+                  ) : n.type === 'mention' ? (
+                    <svg width="8" height="8" viewBox="0 0 14 14" fill="white"><path d="M7 1a6 6 0 100 12A6 6 0 007 1zm2 6a2 2 0 11-4 0 2 2 0 014 0z"/><path d="M9 7a2 2 0 01-2 2" stroke="white" strokeWidth="1"/></svg>
+                  ) : (
+                    <svg width="8" height="8" viewBox="0 0 14 14" fill="white"><path d="M7 1a6 6 0 100 12A6 6 0 007 1zm0 2a2 2 0 110 4 2 2 0 010-4zm0 8a4 4 0 01-3.4-1.9C4.7 8.4 6.2 8 7 8s2.3.4 3.4 1.1A4 4 0 017 11z" /></svg>
+                  );
 
                 return (
                   <div key={n.id}>
-                    {n.post_id ? (
-                      <Link href={`/post/${n.post_id}`}>{inner}</Link>
-                    ) : (
-                      <Link href={`/profile/${n.actor.id}`}>{inner}</Link>
-                    )}
+                    <div className={`flex items-center gap-3 px-4 py-3 ${!n.is_read ? 'bg-[#E6EAF2] dark:bg-[#1C2438]' : ''}`}>
+
+                      {/* Аватарка → профиль */}
+                      <Link href={`/profile/${n.actor.id}`} className="relative shrink-0" onClick={(e) => e.stopPropagation()}>
+                        <Avatar name={n.actor.name} avatar={n.actor.avatar} size={10} />
+                        <div className={`absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full flex items-center justify-center ${badgeColor}`}>
+                          {badgeIcon}
+                        </div>
+                      </Link>
+
+                      {/* Текст → пост (если есть) */}
+                      {n.post_id ? (
+                        <Link href={`/post/${n.post_id}`} className="flex-1 min-w-0">
+                          <p className="text-sm text-[#1F2A44] dark:text-[#E4EAF5] leading-snug">
+                            <span className="font-semibold">{n.actor.name}</span>
+                            {notifText(n)}
+                            {n.post_text && <span className="text-[#9AA3B8]"> «{n.post_text}»</span>}
+                          </p>
+                          <span className="text-xs text-[#9AA3B8]">
+                            {formatDistanceToNow(new Date(n.created_at), { addSuffix: true, locale: ru })}
+                          </span>
+                        </Link>
+                      ) : (
+                        <Link href={`/profile/${n.actor.id}`} className="flex-1 min-w-0">
+                          <p className="text-sm text-[#1F2A44] dark:text-[#E4EAF5] leading-snug">
+                            <span className="font-semibold">{n.actor.name}</span>
+                            {notifText(n)}
+                          </p>
+                          <span className="text-xs text-[#9AA3B8]">
+                            {formatDistanceToNow(new Date(n.created_at), { addSuffix: true, locale: ru })}
+                          </span>
+                        </Link>
+                      )}
+
+                      {!n.is_read && <div className="w-2 h-2 rounded-full bg-[#B06B8A] shrink-0" />}
+                    </div>
                     {i < notifs.length - 1 && <div className="h-px bg-[#DDE3EC] dark:bg-[#252F45] mx-4" />}
                   </div>
                 );

@@ -278,7 +278,7 @@ def posts_list(request):
     return Response(_post_data(post, viewer=request.user), status=201)
 
 
-@api_view(['GET', 'PATCH', 'DELETE'])
+@api_view(['GET', 'POST', 'PATCH', 'DELETE'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def post_detail(request, post_id):
@@ -293,7 +293,7 @@ def post_detail(request, post_id):
     if post.author != request.user:
         return Response({'error': 'Нет прав'}, status=403)
 
-    if request.method == 'PATCH':
+    if request.method in ('PATCH', 'POST'):
         if 'text' in request.data:
             post.text = request.data['text'].strip()[:500]
         if 'moods' in request.data:

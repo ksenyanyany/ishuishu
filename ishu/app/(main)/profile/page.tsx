@@ -417,7 +417,7 @@ export default function ProfilePage() {
             <div className="px-4 py-3 pb-10">
               <button
                 onClick={async () => {
-                  await navigator.clipboard.writeText(`${window.location.origin}/profile/${profile.id}`);
+                  await navigator.clipboard.writeText(`${window.location.origin}/profile/h/${profile.handle.replace(/^@/, '')}`);
                   setProfileShareCopied(true);
                   setTimeout(() => { setProfileShareCopied(false); setProfileShareOpen(false); }, 1500);
                 }}

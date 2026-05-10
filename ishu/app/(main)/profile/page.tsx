@@ -200,9 +200,9 @@ export default function ProfilePage() {
       {listModal && (
         <>
           <div className="fixed inset-0 z-40 bg-black/40" onClick={() => setListModal(null)} />
-          <div className="fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-2xl max-h-[65vh] flex flex-col">
-            <div className="flex items-center justify-between px-4 py-4 border-b border-[#DDE3EC] shrink-0">
-              <span className="text-base font-bold text-[#1F2A44]">{listTitle}</span>
+          <div className="fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-[#161C2A] rounded-t-2xl max-h-[65vh] flex flex-col">
+            <div className="flex items-center justify-between px-4 py-4 border-b border-[#DDE3EC] dark:border-[#252F45] shrink-0">
+              <span className="text-base font-bold text-[#1F2A44] dark:text-[#E4EAF5]">{listTitle}</span>
               <button onClick={() => setListModal(null)} className="text-sm text-[#9AA3B8]">Закрыть</button>
             </div>
             <div className="overflow-y-auto flex-1 px-4 py-2">
@@ -217,9 +217,9 @@ export default function ProfilePage() {
                   key={user.id}
                   href={`/profile/${user.id}`}
                   onClick={() => setListModal(null)}
-                  className="flex items-center gap-3 py-3 border-b border-[#F3F6FC] last:border-0"
+                  className="flex items-center gap-3 py-3 border-b border-[#F3F6FC] dark:border-[#252F45] last:border-0"
                 >
-                  <div className="w-10 h-10 rounded-full bg-[#C5CEDC] flex items-center justify-center shrink-0 overflow-hidden">
+                  <div className="w-10 h-10 rounded-full bg-[#C5CEDC] dark:bg-[#252F45] flex items-center justify-center shrink-0 overflow-hidden">
                     {user.avatar ? (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
@@ -228,7 +228,7 @@ export default function ProfilePage() {
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-[#1F2A44]">{user.name}</p>
+                    <p className="text-sm font-semibold text-[#1F2A44] dark:text-[#E4EAF5]">{user.name}</p>
                     <p className="text-xs text-[#9AA3B8]">{user.handle}</p>
                   </div>
                 </Link>
@@ -260,7 +260,7 @@ export default function ProfilePage() {
       {/* Аватар + редактировать */}
       <div className="relative z-10 flex items-end justify-between -mt-10 mb-3">
         <div className="relative">
-          <div className="w-20 h-20 rounded-full border-4 border-[#F3F6FC] bg-[#C5CEDC] flex items-center justify-center overflow-hidden shrink-0">
+          <div className="w-20 h-20 rounded-full border-4 border-[#F3F6FC] dark:border-[#0D1117] bg-[#C5CEDC] dark:bg-[#252F45] flex items-center justify-center overflow-hidden shrink-0">
             {avatarUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={avatarUrl} alt="аватар" className="w-full h-full object-cover" />
@@ -270,7 +270,7 @@ export default function ProfilePage() {
           </div>
           <button
             onClick={() => avatarInputRef.current?.click()}
-            className="absolute bottom-0.5 right-0.5 w-6 h-6 rounded-full bg-[#6B7FA8] flex items-center justify-center border-2 border-[#F3F6FC]"
+            className="absolute bottom-0.5 right-0.5 w-6 h-6 rounded-full bg-[#6B7FA8] flex items-center justify-center border-2 border-[#F3F6FC] dark:border-[#0D1117]"
           >
             <Image src="/icons/plus.svg" alt="изменить фото" width={10} height={10} style={{ width: 'auto' }} />
           </button>
@@ -278,7 +278,7 @@ export default function ProfilePage() {
         </div>
         <button
           onClick={openEdit}
-          className="px-4 py-1.5 rounded-full border border-[#C5CEDC] text-sm font-semibold text-[#1F2A44] active:opacity-60"
+          className="px-4 py-1.5 rounded-full border border-[#C5CEDC] dark:border-[#252F45] text-sm font-semibold text-[#1F2A44] dark:text-[#E4EAF5] active:opacity-60"
         >
           Редактировать
         </button>
@@ -286,29 +286,29 @@ export default function ProfilePage() {
 
       {/* Имя */}
       <div className="mb-4 min-w-0">
-        <h1 className="text-lg font-bold text-[#1F2A44] break-all">{profile.name}</h1>
+        <h1 className="text-lg font-bold text-[#1F2A44] dark:text-[#E4EAF5] break-all">{profile.name}</h1>
         <p className="text-sm text-[#9AA3B8] truncate">{profile.handle}</p>
-        {profile.bio && <p className="text-sm text-[#3D4860] mt-1.5 leading-relaxed break-words">{profile.bio}</p>}
+        {profile.bio && <p className="text-sm text-[#3D4860] dark:text-[#B8C4D4] mt-1.5 leading-relaxed break-words">{profile.bio}</p>}
       </div>
 
       {/* Статистика */}
       <div className="flex gap-6 mb-5">
         <div className="flex flex-col items-center">
-          <span className="text-base font-bold text-[#1F2A44]">{posts.length}</span>
+          <span className="text-base font-bold text-[#1F2A44] dark:text-[#E4EAF5]">{posts.length}</span>
           <span className="text-xs text-[#9AA3B8]">публикаций</span>
         </div>
         <button onClick={() => openModal('following')} className="flex flex-col items-center active:opacity-60">
-          <span className="text-base font-bold text-[#1F2A44]">{profile.following_count}</span>
+          <span className="text-base font-bold text-[#1F2A44] dark:text-[#E4EAF5]">{profile.following_count}</span>
           <span className="text-xs text-[#9AA3B8]">подписок</span>
         </button>
         <button onClick={() => openModal('followers')} className="flex flex-col items-center active:opacity-60">
-          <span className="text-base font-bold text-[#1F2A44]">{profile.followers_count}</span>
+          <span className="text-base font-bold text-[#1F2A44] dark:text-[#E4EAF5]">{profile.followers_count}</span>
           <span className="text-xs text-[#9AA3B8]">подписчиков</span>
         </button>
       </div>
 
       {/* Вкладки */}
-      <div className="flex border-b border-[#DDE3EC] mb-4 -mx-4">
+      <div className="flex border-b border-[#DDE3EC] dark:border-[#252F45] mb-4 -mx-4">
         {(['posts', 'replies', 'likes'] as TabType[]).map((t) => (
           <button
             key={t}
@@ -328,7 +328,9 @@ export default function ProfilePage() {
               }
             }}
             className={`flex-1 py-3 text-sm font-semibold transition-colors ${
-              tab === t ? 'text-[#1F2A44] border-b-2 border-[#6B7FA8]' : 'text-[#9AA3B8]'
+              tab === t
+                ? 'text-[#1F2A44] dark:text-[#E4EAF5] border-b-2 border-[#6B7FA8]'
+                : 'text-[#9AA3B8]'
             }`}
           >
             {TAB_LABELS[t]}
@@ -365,11 +367,11 @@ export default function ProfilePage() {
           <div className="flex flex-col gap-3 pb-4">
             {userComments.map((c) => (
               <Link key={c.id} href={`/post/${c.post.id}`}>
-                <div className="bg-[#EDEFF3] rounded-2xl px-4 py-3">
+                <div className="bg-[#EDEFF3] dark:bg-[#1C2438] rounded-2xl px-4 py-3">
                   <p className="text-xs text-[#9AA3B8] mb-1 truncate">
                     В ответ на пост {c.post.author.name}: «{c.post.text}»
                   </p>
-                  {c.text && <p className="text-sm text-[#1F2A44] leading-relaxed">{c.text}</p>}
+                  {c.text && <p className="text-sm text-[#1F2A44] dark:text-[#E4EAF5] leading-relaxed">{c.text}</p>}
                   {c.image && (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={c.image} alt="фото" className="mt-2 rounded-xl max-w-full" />
@@ -395,15 +397,15 @@ export default function ProfilePage() {
             onClick={closeEdit}
           />
           <div
-            className="fixed bottom-0 inset-x-0 max-w-sm mx-auto z-50 bg-white rounded-t-2xl flex flex-col transition-transform duration-300 ease-out"
+            className="fixed bottom-0 inset-x-0 max-w-sm mx-auto z-50 bg-white dark:bg-[#161C2A] rounded-t-2xl flex flex-col transition-transform duration-300 ease-out"
             style={{ transform: sheetVisible ? 'translateY(0)' : 'translateY(100%)' }}
           >
             <div className="flex justify-center pt-3 pb-1 shrink-0">
-              <div className="w-10 h-1 rounded-full bg-[#DDE3EC]" />
+              <div className="w-10 h-1 rounded-full bg-[#DDE3EC] dark:bg-[#252F45]" />
             </div>
-            <div className="flex items-center justify-between px-4 py-3 border-b border-[#DDE3EC] shrink-0">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-[#DDE3EC] dark:border-[#252F45] shrink-0">
               <button onClick={closeEdit} className="text-sm text-[#9AA3B8] active:opacity-60">Отмена</button>
-              <span className="text-base font-bold text-[#1F2A44]">Редактировать профиль</span>
+              <span className="text-base font-bold text-[#1F2A44] dark:text-[#E4EAF5]">Редактировать профиль</span>
               <button onClick={saveEdit} disabled={saving} className="text-sm font-bold text-[#6B7FA8] active:opacity-60 disabled:opacity-40">
                 {saving ? '...' : 'Готово'}
               </button>
@@ -414,7 +416,7 @@ export default function ProfilePage() {
                 <label className="text-xs font-semibold text-[#9AA3B8] uppercase tracking-wide">Имя</label>
                 <input
                   type="text" value={editName} onChange={(e) => setEditName(e.target.value)} maxLength={50}
-                  className="w-full bg-[#F3F6FC] rounded-xl px-4 py-3 text-sm text-[#1F2A44] placeholder:text-[#C5CEDC] outline-none focus:ring-2 focus:ring-[#6B7FA8]/30"
+                  className="w-full bg-[#F3F6FC] dark:bg-[#1C2438] rounded-xl px-4 py-3 text-sm text-[#1F2A44] dark:text-[#E4EAF5] placeholder:text-[#C5CEDC] outline-none focus:ring-2 focus:ring-[#6B7FA8]/30"
                   placeholder="Твоё имя"
                 />
               </div>
@@ -425,7 +427,7 @@ export default function ProfilePage() {
                   <input
                     type="text" inputMode="url" value={editHandle} maxLength={29}
                     onChange={(e) => setEditHandle(e.target.value.replace(/^@/, '').replace(/[^a-zA-Z0-9._-]/g, '').toLowerCase())}
-                    className="w-full bg-[#F3F6FC] rounded-xl pl-8 pr-4 py-3 text-sm text-[#1F2A44] placeholder:text-[#C5CEDC] outline-none focus:ring-2 focus:ring-[#6B7FA8]/30"
+                    className="w-full bg-[#F3F6FC] dark:bg-[#1C2438] rounded-xl pl-8 pr-4 py-3 text-sm text-[#1F2A44] dark:text-[#E4EAF5] placeholder:text-[#C5CEDC] outline-none focus:ring-2 focus:ring-[#6B7FA8]/30"
                     placeholder="nickname"
                   />
                 </div>
@@ -437,7 +439,7 @@ export default function ProfilePage() {
                 </div>
                 <textarea
                   value={editBio} onChange={(e) => setEditBio(e.target.value)} maxLength={150} rows={3}
-                  className="w-full bg-[#F3F6FC] rounded-xl px-4 py-3 text-sm text-[#1F2A44] placeholder:text-[#C5CEDC] outline-none focus:ring-2 focus:ring-[#6B7FA8]/30 resize-none leading-relaxed"
+                  className="w-full bg-[#F3F6FC] dark:bg-[#1C2438] rounded-xl px-4 py-3 text-sm text-[#1F2A44] dark:text-[#E4EAF5] placeholder:text-[#C5CEDC] outline-none focus:ring-2 focus:ring-[#6B7FA8]/30 resize-none leading-relaxed"
                   placeholder="Расскажи о себе..."
                 />
               </div>

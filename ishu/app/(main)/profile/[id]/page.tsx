@@ -180,7 +180,7 @@ export default function UserProfilePage() {
 
       {/* Аватар + кнопки */}
       <div className="relative z-10 flex items-end justify-between -mt-10 mb-3">
-        <div className="w-20 h-20 rounded-full border-4 border-[#F3F6FC] bg-[#C5CEDC] flex items-center justify-center overflow-hidden shrink-0">
+        <div className="w-20 h-20 rounded-full border-4 border-[#F3F6FC] dark:border-[#0D1117] bg-[#C5CEDC] dark:bg-[#252F45] flex items-center justify-center overflow-hidden shrink-0">
           {profile.avatar ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={profile.avatar} alt="аватар" className="w-full h-full object-cover" />
@@ -192,7 +192,7 @@ export default function UserProfilePage() {
         <div className="flex items-center gap-2 pb-1 mt-12">
           <button
             onClick={() => router.push(`/activity/chat/${profile.id}`)}
-            className="w-9 h-9 rounded-full border border-[#C5CEDC] bg-white flex items-center justify-center active:opacity-60"
+            className="w-9 h-9 rounded-full border border-[#C5CEDC] dark:border-[#252F45] bg-white dark:bg-[#161C2A] flex items-center justify-center active:opacity-60"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
               <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2v10z" stroke="#6B7FA8" strokeWidth="1.8" strokeLinejoin="round"/>
@@ -205,7 +205,7 @@ export default function UserProfilePage() {
             className="px-4 py-1.5 rounded-full text-sm font-bold transition-all active:opacity-70 disabled:opacity-50"
             style={
               following
-                ? { background: '#EDEFF3', color: '#9AA3B8', border: '1px solid #DDE3EC' }
+                ? { background: 'transparent', color: '#9AA3B8', border: '1px solid #252F45' }
                 : { background: 'linear-gradient(135deg, #7D90B8, #5A6E96)', color: 'white' }
             }
           >
@@ -216,37 +216,39 @@ export default function UserProfilePage() {
 
       {/* Имя и хэндл */}
       <div className="mb-4 min-w-0">
-        <h1 className="text-lg font-bold text-[#1F2A44] break-all">{profile.name}</h1>
+        <h1 className="text-lg font-bold text-[#1F2A44] dark:text-[#E4EAF5] break-all">{profile.name}</h1>
         <p className="text-sm text-[#9AA3B8] truncate">{profile.handle}</p>
         {profile.bio && (
-          <p className="text-sm text-[#3D4860] mt-1.5 leading-relaxed break-words">{profile.bio}</p>
+          <p className="text-sm text-[#3D4860] dark:text-[#B8C4D4] mt-1.5 leading-relaxed break-words">{profile.bio}</p>
         )}
       </div>
 
       {/* Статистика */}
       <div className="flex gap-6 mb-5">
         <div className="flex flex-col items-center">
-          <span className="text-base font-bold text-[#1F2A44]">{posts.length}</span>
+          <span className="text-base font-bold text-[#1F2A44] dark:text-[#E4EAF5]">{posts.length}</span>
           <span className="text-xs text-[#9AA3B8]">публикаций</span>
         </div>
         <div className="flex flex-col items-center">
-          <span className="text-base font-bold text-[#1F2A44]">{profile.following_count}</span>
+          <span className="text-base font-bold text-[#1F2A44] dark:text-[#E4EAF5]">{profile.following_count}</span>
           <span className="text-xs text-[#9AA3B8]">подписок</span>
         </div>
         <div className="flex flex-col items-center">
-          <span className="text-base font-bold text-[#1F2A44]">{profile.followers_count}</span>
+          <span className="text-base font-bold text-[#1F2A44] dark:text-[#E4EAF5]">{profile.followers_count}</span>
           <span className="text-xs text-[#9AA3B8]">подписчиков</span>
         </div>
       </div>
 
       {/* Вкладки */}
-      <div className="flex border-b border-[#DDE3EC] mb-4 -mx-4">
+      <div className="flex border-b border-[#DDE3EC] dark:border-[#252F45] mb-4 -mx-4">
         {(['posts', 'replies', 'likes'] as TabType[]).map((t) => (
           <button
             key={t}
             onClick={() => handleTabChange(t)}
             className={`flex-1 py-3 text-sm font-semibold transition-colors ${
-              tab === t ? 'text-[#1F2A44] border-b-2 border-[#6B7FA8]' : 'text-[#9AA3B8]'
+              tab === t
+                ? 'text-[#1F2A44] dark:text-[#E4EAF5] border-b-2 border-[#6B7FA8]'
+                : 'text-[#9AA3B8]'
             }`}
           >
             {TAB_LABELS[t]}
@@ -269,11 +271,11 @@ export default function UserProfilePage() {
           <div className="flex flex-col gap-3 pb-4">
             {comments.map((c) => (
               <Link key={c.id} href={`/post/${c.post.id}`}>
-                <div className="bg-[#EDEFF3] rounded-2xl px-4 py-3">
+                <div className="bg-[#EDEFF3] dark:bg-[#1C2438] rounded-2xl px-4 py-3">
                   <p className="text-xs text-[#9AA3B8] mb-1 truncate">
                     В ответ на пост {c.post.author.name}: «{c.post.text}»
                   </p>
-                  {c.text && <p className="text-sm text-[#1F2A44] leading-relaxed">{c.text}</p>}
+                  {c.text && <p className="text-sm text-[#1F2A44] dark:text-[#E4EAF5] leading-relaxed">{c.text}</p>}
                   {c.image && (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={c.image} alt="фото" className="mt-2 rounded-xl max-w-full" />

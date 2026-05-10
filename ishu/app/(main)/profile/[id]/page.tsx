@@ -66,6 +66,7 @@ export default function UserProfilePage() {
 
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [lightbox, setLightbox] = useState<string | null>(null);
   const [notFound, setNotFound] = useState(false);
   const [following, setFollowing] = useState(false);
   const [followLoading, setFollowLoading] = useState(false);
@@ -161,7 +162,7 @@ export default function UserProfilePage() {
         <div className="w-full h-36 relative overflow-hidden">
           {profile.cover ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={profile.cover} alt="обложка" className="w-full h-full object-cover" />
+            <img src={profile.cover} alt="обложка" className="w-full h-full object-cover cursor-pointer" onClick={() => setLightbox(profile.cover)} />
           ) : (
             <div className="w-full h-full bg-gradient-to-br from-[#B8C4D8] to-[#8E9BB5]" />
           )}
@@ -180,7 +181,11 @@ export default function UserProfilePage() {
 
       {/* Аватар + кнопки */}
       <div className="relative z-10 flex items-end justify-between -mt-10 mb-3">
-        <div className="w-20 h-20 rounded-full border-4 border-[#F3F6FC] dark:border-[#0D1117] bg-[#C5CEDC] dark:bg-[#252F45] flex items-center justify-center overflow-hidden shrink-0">
+        <div
+          className="w-20 h-20 rounded-full border-4 border-[#F3F6FC] dark:border-[#0D1117] bg-[#C5CEDC] dark:bg-[#252F45] flex items-center justify-center overflow-hidden shrink-0"
+          onClick={() => profile.avatar && setLightbox(profile.avatar)}
+          style={profile.avatar ? { cursor: 'pointer' } : {}}
+        >
           {profile.avatar ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={profile.avatar} alt="аватар" className="w-full h-full object-cover" />
@@ -287,6 +292,12 @@ export default function UserProfilePage() {
         ) : (
           <EmptyState label="Ответов пока нет" />
         )
+      )}
+      {lightbox && (
+        <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4" onClick={() => setLightbox(null)}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={lightbox} alt="просмотр" className="max-w-full max-h-full rounded-xl object-contain" style={{ maxWidth: '100vw', maxHeight: '100vh' }} />
+        </div>
       )}
     </>
   );

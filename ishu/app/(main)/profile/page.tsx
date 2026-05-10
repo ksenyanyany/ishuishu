@@ -70,6 +70,7 @@ export default function ProfilePage() {
   const [coverUrl, setCoverUrl] = useState<string | null>(null);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [cropState, setCropState] = useState<{ src: string; type: 'cover' | 'avatar' } | null>(null);
+  const [lightbox, setLightbox] = useState<string | null>(null);
 
   const [listModal, setListModal] = useState<ModalType>(null);
   const [listData, setListData] = useState<UserItem[]>([]);
@@ -201,6 +202,13 @@ export default function ProfilePage() {
         <ImageCropModal src={cropState.src} cropType={cropState.type} onConfirm={handleCropConfirm} onCancel={handleCropCancel} />
       )}
 
+      {lightbox && (
+        <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4" onClick={() => setLightbox(null)}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={lightbox} alt="просмотр" className="max-w-full max-h-full rounded-xl object-contain" style={{ maxWidth: '100vw', maxHeight: '100vh' }} />
+        </div>
+      )}
+
       {/* Модалка подписчики / подписки */}
       {listModal && (
         <>
@@ -248,7 +256,7 @@ export default function ProfilePage() {
         <div className="w-full h-36 relative overflow-hidden">
           {coverUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={coverUrl} alt="обложка" className="w-full h-full object-cover" />
+            <img src={coverUrl} alt="обложка" className="w-full h-full object-cover cursor-pointer" onClick={() => setLightbox(coverUrl)} />
           ) : (
             <div className="w-full h-full bg-gradient-to-br from-[#B8C4D8] to-[#8E9BB5]" />
           )}
@@ -273,7 +281,11 @@ export default function ProfilePage() {
       {/* Аватар + редактировать */}
       <div className="relative z-10 flex items-end justify-between -mt-10 mb-3">
         <div className="relative">
-          <div className="w-20 h-20 rounded-full border-4 border-[#F3F6FC] dark:border-[#0D1117] bg-[#C5CEDC] dark:bg-[#252F45] flex items-center justify-center overflow-hidden shrink-0">
+          <div
+            className="w-20 h-20 rounded-full border-4 border-[#F3F6FC] dark:border-[#0D1117] bg-[#C5CEDC] dark:bg-[#252F45] flex items-center justify-center overflow-hidden shrink-0"
+            onClick={() => avatarUrl && setLightbox(avatarUrl)}
+            style={avatarUrl ? { cursor: 'pointer' } : {}}
+          >
             {avatarUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={avatarUrl} alt="аватар" className="w-full h-full object-cover" />

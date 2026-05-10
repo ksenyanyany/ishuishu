@@ -22,7 +22,7 @@ function mapPost(raw: any): Post {
     authorId: String(raw.author.id),
     author: { id: String(raw.author.id), name, initials, avatarUrl: raw.author.avatar || undefined },
     createdAt: new Date(raw.created_at),
-    image: raw.image || undefined,
+    images: Array.isArray(raw.images) ? raw.images : raw.image ? [raw.image] : [],
     moods: raw.moods,
     text: raw.text,
     likesCount: raw.likes_count,

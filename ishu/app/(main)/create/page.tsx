@@ -31,8 +31,9 @@ export default function CreatePage() {
     const file = e.target.files?.[0];
     if (!file) return;
     const reader = new FileReader();
-    reader.onload = (ev) => setImages((prev) => [...prev, ev.target?.result as string]);
+    reader.onload = (ev) => setImages((prev) => prev.length < 4 ? [...prev, ev.target?.result as string] : prev);
     reader.readAsDataURL(file);
+    e.target.value = '';
   }
 
   function removeImage(index: number) {
@@ -40,12 +41,12 @@ export default function CreatePage() {
   }
 
   async function handlePublish() {
-    if (!text.trim()) return;
+    if (!text.trim() && images.length === 0) return;
     const token = localStorage.getItem('token');
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/posts/`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Token ${token}` },
-      body: JSON.stringify({ text: text.trim(), moods: selectedMoods, image: images[0] ?? '' }),
+      body: JSON.stringify({ text: text.trim(), moods: selectedMoods, images }),
     });
     if (res.ok) router.push('/feed');
   }
@@ -138,12 +139,14 @@ export default function CreatePage() {
           </div>
         ))}
 
-        {/* Кнопка добавить — всегда видна */}
-        <label className="w-20 h-20 rounded-xl border-2 border-dashed border-[#C5CEDC] dark:border-[#252F45] flex flex-col items-center justify-center gap-1 cursor-pointer shrink-0">
-          <Image src="/icons/plus-gray.svg" alt="добавить" width={22} height={22} style={{ width: 'auto' }} />
-          <span className="text-xs text-[#9AA3B8]">Добавить</span>
-          <input type="file" accept="image/*" className="hidden" onChange={handleImage} />
-        </label>
+        {/* Кнопка добавить — только если меньше 4 фото */}
+        {images.length < 4 && (
+          <label className="w-20 h-20 rounded-xl border-2 border-dashed border-[#C5CEDC] dark:border-[#252F45] flex flex-col items-center justify-center gap-1 cursor-pointer shrink-0">
+            <Image src="/icons/plus-gray.svg" alt="добавить" width={22} height={22} style={{ width: 'auto' }} />
+            <span className="text-xs text-[#9AA3B8]">{images.length}/4</span>
+            <input type="file" accept="image/*" className="hidden" onChange={handleImage} />
+          </label>
+        )}
       </div>
 
     </div>

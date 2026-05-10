@@ -18,13 +18,59 @@ export type Post = {
   authorId: string;
   author: { id: string; name: string; initials: string; avatarUrl?: string };
   createdAt: Date;
-  image?: string;
+  images?: string[];
   moods: string[];
   text: string;
   likesCount: number;
   commentsCount: number;
   isLiked?: boolean;
 };
+
+function ImageGrid({ images, onOpen }: { images: string[]; onOpen: (src: string) => void }) {
+  const count = images.length;
+  if (count === 1) {
+    return (
+      <div className="w-full aspect-[4/3] relative cursor-pointer" onClick={() => onOpen(images[0])}>
+        <Image src={images[0]} alt="фото" fill className="object-cover" />
+      </div>
+    );
+  }
+  if (count === 2) {
+    return (
+      <div className="grid grid-cols-2 gap-0.5">
+        {images.map((src, i) => (
+          <div key={i} className="aspect-square relative cursor-pointer" onClick={() => onOpen(src)}>
+            <Image src={src} alt="фото" fill className="object-cover" />
+          </div>
+        ))}
+      </div>
+    );
+  }
+  if (count === 3) {
+    return (
+      <div className="grid grid-cols-2 gap-0.5">
+        <div className="row-span-2 aspect-[3/4] relative cursor-pointer" onClick={() => onOpen(images[0])}>
+          <Image src={images[0]} alt="фото" fill className="object-cover" />
+        </div>
+        {images.slice(1).map((src, i) => (
+          <div key={i} className="aspect-[3/2] relative cursor-pointer" onClick={() => onOpen(src)}>
+            <Image src={src} alt="фото" fill className="object-cover" />
+          </div>
+        ))}
+      </div>
+    );
+  }
+  // 4 photos
+  return (
+    <div className="grid grid-cols-2 gap-0.5">
+      {images.map((src, i) => (
+        <div key={i} className="aspect-square relative cursor-pointer" onClick={() => onOpen(src)}>
+          <Image src={src} alt="фото" fill className="object-cover" />
+        </div>
+      ))}
+    </div>
+  );
+}
 
 export default function PostCard({ post, onDelete }: { post: Post; onDelete?: (id: string) => void }) {
   const [liked, setLiked] = useState(post.isLiked ?? false);
@@ -140,13 +186,8 @@ export default function PostCard({ post, onDelete }: { post: Post; onDelete?: (i
         )}
 
         {/* Фото */}
-        {post.image && (
-          <div
-            className="w-full aspect-[4/3] relative cursor-pointer"
-            onClick={() => setLightboxImg(post.image!)}
-          >
-            <Image src={post.image} alt="пост" fill className="object-cover" />
-          </div>
+        {post.images && post.images.length > 0 && (
+          <ImageGrid images={post.images} onOpen={setLightboxImg} />
         )}
 
         {/* Теги */}

@@ -1,4 +1,5 @@
 import re
+import json
 from django.db.models import Q
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.authentication import TokenAuthentication
@@ -66,6 +67,19 @@ def _parse_mentions(text):
     ).select_related('user')
 
 
+def _parse_images(raw):
+    """Return list of image URLs from stored value (JSON array or single URL)."""
+    if not raw:
+        return []
+    try:
+        parsed = json.loads(raw)
+        if isinstance(parsed, list):
+            return parsed
+    except (json.JSONDecodeError, ValueError):
+        pass
+    return [raw]
+
+
 def _post_data(post, viewer=None):
     is_liked = post.likes.filter(id=viewer.id).exists() if viewer else False
     return {
@@ -73,7 +87,7 @@ def _post_data(post, viewer=None):
         'author': _author(post.author),
         'text': post.text,
         'moods': post.moods,
-        'image': post.image,
+        'images': _parse_images(post.image),
         'created_at': post.created_at.isoformat(),
         'likes_count': post.likes.count(),
         'comments_count': post.comments.count(),
@@ -298,14 +312,22 @@ def posts_list(request):
         return Response([_post_data(p, viewer=request.user) for p in posts])
 
     text = request.data.get('text', '').strip()
-    if not text:
-        return Response({'error': 'Текст обязателен'}, status=400)
+    images = request.data.get('images', [])
+    if isinstance(images, list):
+        images = [img for img in images if img][:4]
+    else:
+        images = []
+
+    if not text and not images:
+        return Response({'error': 'Добавьте текст или фото'}, status=400)
+
+    image_stored = json.dumps(images) if images else ''
 
     post = Post.objects.create(
         author=request.user,
         text=text,
         moods=request.data.get('moods', []),
-        image=request.data.get('image', ''),
+        image=image_stored,
     )
 
     for profile in _parse_mentions(text):

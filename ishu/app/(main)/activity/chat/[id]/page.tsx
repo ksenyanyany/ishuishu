@@ -144,10 +144,10 @@ export default function ChatPage() {
     <div className="flex flex-col h-screen">
 
       {/* Шапка */}
-      <div className="fixed top-0 left-0 right-0 lg:left-64 z-40 flex items-center gap-3 pt-14 pb-3 px-4 bg-[#F3F6FC]/95 backdrop-blur-sm border-b border-[#DDE3EC]">
+      <div className="fixed top-0 left-0 right-0 lg:left-64 z-40 flex items-center gap-3 pt-14 pb-3 px-4 bg-[#F3F6FC]/95 dark:bg-[#0D1117]/95 backdrop-blur-sm border-b border-[#DDE3EC] dark:border-[#252F45]">
         <button
           onClick={() => router.back()}
-          className="w-10 h-10 rounded-full bg-[#EDEFF3] flex items-center justify-center shrink-0"
+          className="w-10 h-10 rounded-full bg-[#EDEFF3] dark:bg-[#1C2438] flex items-center justify-center shrink-0"
         >
           <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
             <path d="M11 4L6 9l5 5" stroke="#6B7FA8" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
@@ -156,7 +156,7 @@ export default function ChatPage() {
 
         {partner && (
           <>
-            <div className="w-10 h-10 rounded-full bg-[#C5CEDC] flex items-center justify-center shrink-0 overflow-hidden">
+            <div className="w-10 h-10 rounded-full bg-[#C5CEDC] dark:bg-[#252F45] flex items-center justify-center shrink-0 overflow-hidden">
               {partner.avatar ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={partner.avatar} alt={partner.name} className="w-full h-full object-cover" />
@@ -164,7 +164,7 @@ export default function ChatPage() {
                 <span className="text-sm font-semibold text-[#4B5563]">{initials(partner.name)}</span>
               )}
             </div>
-            <span className="text-base font-bold text-[#1F2A44] flex-1">{partner.name}</span>
+            <span className="text-base font-bold text-[#1F2A44] dark:text-[#E4EAF5] flex-1">{partner.name}</span>
           </>
         )}
       </div>
@@ -192,7 +192,7 @@ export default function ChatPage() {
                       className={`px-4 py-2.5 rounded-2xl text-[15px] leading-relaxed ${
                         msg.is_mine
                           ? 'bg-[#6B7FA8] text-white rounded-br-sm'
-                          : 'bg-[#EDEFF3] text-[#1F2A44] rounded-bl-sm'
+                          : 'bg-[#EDEFF3] dark:bg-[#161C2A] text-[#1F2A44] dark:text-[#E4EAF5] rounded-bl-sm'
                       } ${msg.pending ? 'opacity-70' : ''}`}
                     >
                       {msg.text && (
@@ -248,7 +248,7 @@ export default function ChatPage() {
           )}
 
           <div className="flex items-end gap-2">
-            <label className="w-10 h-10 rounded-full bg-[#EDEFF3] flex items-center justify-center shrink-0 cursor-pointer mb-0.5">
+            <label className="w-10 h-10 rounded-full bg-[#EDEFF3] dark:bg-[#1C2438] flex items-center justify-center shrink-0 cursor-pointer mb-0.5">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                 <rect x="3" y="6" width="18" height="14" rx="3" stroke="#9AA3B8" strokeWidth="1.6"/>
                 <circle cx="12" cy="13" r="3.5" stroke="#9AA3B8" strokeWidth="1.6"/>
@@ -257,10 +257,10 @@ export default function ChatPage() {
               <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleFile} />
             </label>
 
-            <div className="flex-1 bg-[#EDEFF3] rounded-2xl px-4 py-3 flex items-end gap-2">
+            <div className="flex-1 bg-[#EDEFF3] dark:bg-[#1C2438] rounded-2xl px-4 py-3 flex items-end gap-2">
               <textarea
                 ref={textareaRef}
-                className="flex-1 bg-transparent outline-none text-[15px] text-[#1F2A44] placeholder:text-[#9AA3B8] resize-none max-h-28 leading-relaxed"
+                className="flex-1 bg-transparent outline-none text-[15px] text-[#1F2A44] dark:text-[#E4EAF5] placeholder:text-[#9AA3B8] resize-none max-h-28 leading-relaxed"
                 placeholder="Сообщение..."
                 rows={1}
                 value={text}

@@ -109,11 +109,11 @@ export default function PostPage() {
         <div className="flex items-center gap-3 pt-8 pb-4">
           <button
             onClick={() => router.back()}
-            className="w-9 h-9 rounded-full bg-[#EDEFF3] flex items-center justify-center shrink-0"
+            className="w-9 h-9 rounded-full bg-[#EDEFF3] dark:bg-[#1C2438] flex items-center justify-center shrink-0"
           >
             <Image src="/icons/back.svg" alt="назад" width={16} height={16} style={{ width: 'auto' }} />
           </button>
-          <span className="text-base font-bold text-[#1F2A44]">Пост</span>
+          <span className="text-base font-bold text-[#1F2A44] dark:text-[#E4EAF5]">Пост</span>
         </div>
 
         <PostCard post={post} onDelete={() => router.back()} />
@@ -124,7 +124,7 @@ export default function PostPage() {
           </span>
         </div>
 
-        <div className="flex flex-col divide-y divide-[#DDE3EC]">
+        <div className="flex flex-col divide-y divide-[#DDE3EC] dark:divide-[#252F45]">
           {comments.map((comment) => (
             <CommentCard key={comment.id} comment={comment} onReply={handleReply} />
           ))}

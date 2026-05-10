@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import PostCard, { Post } from '@/components/PostCard';
+import { toggleTheme } from '@/components/ThemeProvider';
 
 const API = process.env.NEXT_PUBLIC_API_URL;
 
@@ -84,12 +85,12 @@ export default function FeedPage() {
   }
 
   return (
-    <main className="w-full max-w-sm flex flex-col gap-4 py-6">
+    <main className="w-full max-w-sm flex flex-col gap-4 py-6 dark:text-[#E4EAF5]">
 
       {/* шапка */}
       <div className="flex items-center gap-2 overflow-hidden">
         <h1
-          className="text-3xl text-[#2D3452] whitespace-nowrap overflow-hidden transition-all duration-300 ease-in-out"
+          className="text-3xl text-[#2D3452] dark:text-[#E4EAF5] whitespace-nowrap overflow-hidden transition-all duration-300 ease-in-out"
           style={{
             fontFamily: 'var(--font-inter), sans-serif',
             maxWidth: searchOpen ? '0px' : '160px',
@@ -100,7 +101,7 @@ export default function FeedPage() {
         </h1>
 
         <div
-          className="flex items-center gap-2 bg-[#E8ECF2] rounded-2xl overflow-hidden transition-all duration-300 ease-in-out"
+          className="flex items-center gap-2 bg-[#E8ECF2] dark:bg-[#1C2438] rounded-2xl overflow-hidden transition-all duration-300 ease-in-out"
           style={{
             flex: searchOpen ? 1 : 0,
             maxWidth: searchOpen ? '100%' : '0px',
@@ -122,7 +123,7 @@ export default function FeedPage() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Поиск людей и постов..."
-            className="flex-1 bg-transparent text-sm text-[#1F2A44] placeholder:text-[#9AA3B8] outline-none min-w-0"
+            className="flex-1 bg-transparent text-sm text-[#1F2A44] dark:text-[#E4EAF5] placeholder:text-[#9AA3B8] outline-none min-w-0"
           />
         </div>
 
@@ -144,17 +145,29 @@ export default function FeedPage() {
             )}
           </div>
         </button>
+        <button
+          onClick={toggleTheme}
+          className="shrink-0 w-9 h-9 rounded-xl flex items-center justify-center active:opacity-60 text-[#9AA3B8] dark:text-[#6B7A90]"
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="block dark:hidden">
+            <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="hidden dark:block">
+            <circle cx="12" cy="12" r="5" stroke="currentColor" strokeWidth="1.8"/>
+            <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+          </svg>
+        </button>
       </div>
 
       {/* режим поиска */}
       {searchOpen ? (
         <>
           {!query.trim() && (
-            <p className="text-sm text-[#9AA3B8] text-center py-8">Начни вводить имя или текст поста</p>
+            <p className="text-sm text-[#9AA3B8] dark:text-[#6B7A90] text-center py-8">Начни вводить имя или текст поста</p>
           )}
 
           {searching && (
-            <p className="text-sm text-[#9AA3B8] text-center py-8">Поиск...</p>
+            <p className="text-sm text-[#9AA3B8] dark:text-[#6B7A90] text-center py-8">Поиск...</p>
           )}
 
           {!searching && searchResults && (
@@ -169,7 +182,7 @@ export default function FeedPage() {
                         key={user.id}
                         href={`/profile/${user.id}`}
                         onClick={closeSearch}
-                        className="flex items-center gap-3 bg-[#EDEFF3] rounded-2xl px-4 py-3"
+                        className="flex items-center gap-3 bg-[#EDEFF3] dark:bg-[#161C2A] rounded-2xl px-4 py-3"
                       >
                         <div className="w-10 h-10 rounded-full bg-[#C5CEDC] flex items-center justify-center shrink-0 overflow-hidden">
                           {user.avatar ? (
@@ -180,7 +193,7 @@ export default function FeedPage() {
                           )}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-semibold text-[#1F2A44]">{user.name}</p>
+                          <p className="text-sm font-semibold text-[#1F2A44] dark:text-[#E4EAF5]">{user.name}</p>
                           <p className="text-xs text-[#9AA3B8]">{user.handle}</p>
                         </div>
                         {user.is_following && (
@@ -207,7 +220,7 @@ export default function FeedPage() {
               {searchResults.users.length === 0 && searchResults.posts.length === 0 && (
                 <div className="flex flex-col items-center py-16 gap-2">
                   <span className="text-2xl">·  ·  ·</span>
-                  <span className="text-sm text-[#9AA3B8]">Ничего не нашлось</span>
+                  <span className="text-sm text-[#9AA3B8] dark:text-[#6B7A90]">Ничего не нашлось</span>
                 </div>
               )}
             </>
@@ -216,13 +229,13 @@ export default function FeedPage() {
       ) : (
         /* обычная лента */
         loading ? (
-          <div className="flex justify-center py-16 text-sm text-[#9AA3B8]">Загрузка...</div>
+          <div className="flex justify-center py-16 text-sm text-[#9AA3B8] dark:text-[#6B7A90]">Загрузка...</div>
         ) : posts.length > 0 ? (
           posts.map((post) => <PostCard key={post.id} post={post} onDelete={(id) => setPosts((prev) => prev.filter((p) => p.id !== id))} />)
         ) : (
           <div className="flex flex-col items-center py-16 gap-2">
             <span className="text-2xl">·  ·  ·</span>
-            <span className="text-sm text-[#9AA3B8]">Пока нет постов</span>
+            <span className="text-sm text-[#9AA3B8] dark:text-[#6B7A90]">Пока нет постов</span>
           </div>
         )
       )}

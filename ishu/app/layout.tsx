@@ -1,6 +1,7 @@
 import "./globals.css";
 import { Inter } from "next/font/google";
 import localFont from "next/font/local";
+import ThemeProvider from "@/components/ThemeProvider";
 
 const inter = Inter({
   subsets: ["latin", "cyrillic"],
@@ -14,20 +15,11 @@ const astroneerFont = localFont({
   display: "swap",
 });
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ru">
-      <body
-        className={`${inter.variable} ${astroneerFont.variable} min-h-screen`}
-        style={{
-          backgroundColor: "#F3F6FC",
-        }}
-      >
-        {children}
+      <body className={`${inter.variable} ${astroneerFont.variable} min-h-screen bg-[#F3F6FC] dark:bg-[#0D1117]`}>
+        <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>
   );

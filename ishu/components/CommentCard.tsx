@@ -55,7 +55,7 @@ export default function CommentCard({
       <div className="flex gap-3 py-3 relative">
 
         {/* Аватар */}
-        <div className="w-8 h-8 rounded-full bg-[#C5CEDC] flex items-center justify-center shrink-0 overflow-hidden mt-0.5">
+        <div className="w-8 h-8 rounded-full bg-[#C5CEDC] dark:bg-[#252F45] flex items-center justify-center shrink-0 overflow-hidden mt-0.5">
           {comment.author.avatarUrl ? (
             <Image
               src={comment.author.avatarUrl}
@@ -73,11 +73,11 @@ export default function CommentCard({
 
         {/* Контент */}
         <div className="flex-1 min-w-0">
-          <div className="bg-[#EDEFF3] rounded-2xl rounded-tl-sm px-3 py-2.5">
+          <div className="bg-[#EDEFF3] dark:bg-[#161C2A] rounded-2xl rounded-tl-sm px-3 py-2.5">
 
             {/* Шапка */}
             <div className="flex items-center justify-between gap-2 mb-1">
-              <span className="text-xs font-bold text-[#1F2A44]">
+              <span className="text-xs font-bold text-[#1F2A44] dark:text-[#E4EAF5]">
                 {comment.author.name}
               </span>
               <div className="flex items-center gap-2">
@@ -99,7 +99,7 @@ export default function CommentCard({
 
             {/* Текст */}
             {comment.text && (
-              <p className="text-sm text-[#3D4860] leading-relaxed">
+              <p className="text-sm text-[#3D4860] dark:text-[#B8C4D4] leading-relaxed">
                 {comment.text}
               </p>
             )}
@@ -166,27 +166,27 @@ export default function CommentCard({
         {menuOpen && (
           <>
             <div className="fixed inset-0 z-10" onClick={() => setMenuOpen(false)} />
-            <div className="absolute top-8 right-0 z-20 bg-white rounded-2xl shadow-lg overflow-hidden min-w-[160px]">
+            <div className="absolute top-8 right-0 z-20 bg-white dark:bg-[#1C2438] rounded-2xl shadow-lg overflow-hidden min-w-[160px]">
               {isMyComment ? (
                 <>
-                  <button className="w-full text-left px-4 py-3 text-sm text-[#1F2A44] hover:bg-[#F3F6FC]"
+                  <button className="w-full text-left px-4 py-3 text-sm text-[#1F2A44] dark:text-[#E4EAF5] hover:bg-[#F3F6FC] dark:hover:bg-[#252F45]"
                     onClick={() => setMenuOpen(false)}>
                     Редактировать
                   </button>
-                  <div className="h-px bg-[#EDEFF3]" />
-                  <button className="w-full text-left px-4 py-3 text-sm text-red-400 hover:bg-[#F3F6FC]"
+                  <div className="h-px bg-[#EDEFF3] dark:bg-[#252F45]" />
+                  <button className="w-full text-left px-4 py-3 text-sm text-red-400 hover:bg-[#F3F6FC] dark:hover:bg-[#252F45]"
                     onClick={() => setMenuOpen(false)}>
                     Удалить
                   </button>
                 </>
               ) : (
                 <>
-                  <button className="w-full text-left px-4 py-3 text-sm text-[#1F2A44] hover:bg-[#F3F6FC]"
+                  <button className="w-full text-left px-4 py-3 text-sm text-[#1F2A44] dark:text-[#E4EAF5] hover:bg-[#F3F6FC] dark:hover:bg-[#252F45]"
                     onClick={() => setMenuOpen(false)}>
                     Скрыть
                   </button>
-                  <div className="h-px bg-[#EDEFF3]" />
-                  <button className="w-full text-left px-4 py-3 text-sm text-red-400 hover:bg-[#F3F6FC]"
+                  <div className="h-px bg-[#EDEFF3] dark:bg-[#252F45]" />
+                  <button className="w-full text-left px-4 py-3 text-sm text-red-400 hover:bg-[#F3F6FC] dark:hover:bg-[#252F45]"
                     onClick={() => setMenuOpen(false)}>
                     Пожаловаться
                   </button>

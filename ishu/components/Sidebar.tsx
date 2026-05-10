@@ -81,7 +81,7 @@ export default function Sidebar() {
       href: '/profile',
       label: 'Профиль',
       icon: (_active: boolean) => (
-        <div className="w-[22px] h-[22px] rounded-full overflow-hidden bg-[#C5CEDC] flex items-center justify-center shrink-0">
+        <div className="w-[22px] h-[22px] rounded-full overflow-hidden bg-[#C5CEDC] dark:bg-[#252F45] flex items-center justify-center shrink-0">
           {avatar ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={avatar} alt="" className="w-full h-full object-cover" />
@@ -97,16 +97,14 @@ export default function Sidebar() {
   ];
 
   return (
-    <aside className="hidden lg:flex flex-col fixed left-0 top-0 h-full w-64 px-4 py-8 z-20"
+    <aside className="hidden lg:flex flex-col fixed left-0 top-0 h-full w-64 px-4 py-8 z-20 bg-[rgba(248,250,252,0.95)] dark:bg-[#161C2A] border-r border-[rgba(221,227,236,0.8)] dark:border-[#252F45]"
       style={{
-        background: 'rgba(248, 250, 252, 0.95)',
         backdropFilter: 'blur(12px)',
-        borderRight: '1px solid rgba(221,227,236,0.8)',
       }}
     >
       {/* Логотип */}
       <div className="px-3 mb-10">
-        <span className="text-4xl font-(--font-astroneer) text-[#1F2A44]">ishu.</span>
+        <span className="text-4xl font-(--font-astroneer) text-[#1F2A44] dark:text-[#E4EAF5]">ishu.</span>
       </div>
 
       {/* Навигация */}
@@ -120,7 +118,7 @@ export default function Sidebar() {
               className={`flex items-center gap-3 px-3 py-3 rounded-2xl transition-all ${
                 active
                   ? 'bg-[#6B7FA8]/10 text-[#6B7FA8]'
-                  : 'text-[#9AA3B8] hover:bg-[#EDEFF3] hover:text-[#1F2A44]'
+                  : 'text-[#9AA3B8] hover:bg-[#EDEFF3] dark:hover:bg-[#1C2438] hover:text-[#1F2A44]'
               }`}
             >
               <div className="relative shrink-0">
@@ -148,8 +146,8 @@ export default function Sidebar() {
 
       {/* Профиль пользователя */}
       {name && (
-        <div className="flex items-center gap-3 px-2 py-2 rounded-2xl hover:bg-[#EDEFF3] cursor-pointer transition-all" onClick={() => router.push('/profile')}>
-          <div className="w-9 h-9 rounded-full overflow-hidden bg-[#C5CEDC] flex items-center justify-center shrink-0">
+        <div className="flex items-center gap-3 px-2 py-2 rounded-2xl hover:bg-[#EDEFF3] dark:hover:bg-[#1C2438] cursor-pointer transition-all" onClick={() => router.push('/profile')}>
+          <div className="w-9 h-9 rounded-full overflow-hidden bg-[#C5CEDC] dark:bg-[#252F45] flex items-center justify-center shrink-0">
             {avatar ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={avatar} alt="" className="w-full h-full object-cover" />
@@ -158,7 +156,7 @@ export default function Sidebar() {
             )}
           </div>
           <div className="flex flex-col min-w-0">
-            <span className="text-sm font-bold text-[#1F2A44] truncate">{name}</span>
+            <span className="text-sm font-bold text-[#1F2A44] dark:text-[#E4EAF5] truncate">{name}</span>
             <span className="text-xs text-[#9AA3B8] truncate">{handle}</span>
           </div>
         </div>

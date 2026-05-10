@@ -62,7 +62,7 @@ export default function CommentInput({ onSubmit, replyTo, onCancelReply }: Props
         {/* Баннер "отвечаю на..." */}
         {replyTo && (
           <div className="flex items-center gap-2 mb-2 px-1">
-            <div className="flex-1 min-w-0 bg-[#EDEFF3] rounded-xl px-3 py-1.5 border-l-2 border-[#6B7FA8]">
+            <div className="flex-1 min-w-0 bg-[#EDEFF3] dark:bg-[#1C2438] rounded-xl px-3 py-1.5 border-l-2 border-[#6B7FA8]">
               <span className="text-xs font-semibold text-[#6B7FA8]">
                 {replyTo.name}
               </span>
@@ -70,7 +70,7 @@ export default function CommentInput({ onSubmit, replyTo, onCancelReply }: Props
             </div>
             <button
               onClick={onCancelReply}
-              className="w-6 h-6 rounded-full bg-[#EDEFF3] flex items-center justify-center shrink-0"
+              className="w-6 h-6 rounded-full bg-[#EDEFF3] dark:bg-[#1C2438] flex items-center justify-center shrink-0"
             >
               <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
                 <path d="M1 1L9 9M9 1L1 9" stroke="#9AA3B8" strokeWidth="1.5" strokeLinecap="round"/>
@@ -100,7 +100,7 @@ export default function CommentInput({ onSubmit, replyTo, onCancelReply }: Props
         <div className="flex items-end gap-2">
 
           {/* Кнопка прикрепить фото */}
-          <label className="w-9 h-9 rounded-full bg-[#EDEFF3] flex items-center justify-center shrink-0 cursor-pointer mb-0.5">
+          <label className="w-9 h-9 rounded-full bg-[#EDEFF3] dark:bg-[#1C2438] flex items-center justify-center shrink-0 cursor-pointer mb-0.5">
             <Image
               src="/icons/photo.svg"
               alt="фото"
@@ -119,10 +119,10 @@ export default function CommentInput({ onSubmit, replyTo, onCancelReply }: Props
           </label>
 
           {/* Текстовое поле */}
-          <div className="flex-1 bg-[#EDEFF3] rounded-2xl px-4 py-2.5 flex items-end gap-2">
+          <div className="flex-1 bg-[#EDEFF3] dark:bg-[#1C2438] rounded-2xl px-4 py-2.5 flex items-end gap-2">
             <textarea
               ref={textareaRef}
-              className="flex-1 bg-transparent outline-none text-sm text-[#1F2A44] placeholder:text-[#9AA3B8] resize-none max-h-28 leading-relaxed"
+              className="flex-1 bg-transparent outline-none text-sm text-[#1F2A44] dark:text-[#E4EAF5] placeholder:text-[#9AA3B8] resize-none max-h-28 leading-relaxed"
               placeholder={replyTo ? `Ответить ${replyTo.name}...` : 'Напиши комментарий...'}
               rows={1}
               value={text}

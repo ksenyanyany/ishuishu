@@ -88,9 +88,8 @@ export default function BottomNav() {
   return (
     <div className="fixed bottom-0 inset-x-0 flex justify-center pb-5 px-4 z-30 pointer-events-none">
       <nav
-        className="pointer-events-auto w-full max-w-sm flex items-center px-4 py-2 gap-2"
+        className="pointer-events-auto w-full max-w-sm flex items-center px-4 py-2 gap-2 bg-[rgba(235,240,248,0.82)] dark:bg-[#161C2A]/90 dark:border-[#252F45]"
         style={{
-          background: 'rgba(235, 240, 248, 0.82)',
           backdropFilter: 'blur(16px)',
           WebkitBackdropFilter: 'blur(16px)',
           borderRadius: '22px',

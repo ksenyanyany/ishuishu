@@ -35,7 +35,7 @@ type Chat = {
 };
 
 function Avatar({ name, avatar, size = 10 }: { name: string; avatar: string; size?: number }) {
-  const cls = `w-${size} h-${size} rounded-full bg-[#C5CEDC] flex items-center justify-center shrink-0 overflow-hidden`;
+  const cls = `w-${size} h-${size} rounded-full bg-[#C5CEDC] dark:bg-[#252F45] flex items-center justify-center shrink-0 overflow-hidden`;
   return (
     <div className={cls}>
       {avatar ? (
@@ -106,7 +106,7 @@ export default function ActivityPage() {
     <main className="flex flex-col py-6 gap-4">
 
       {/* Переключатель */}
-      <div className="flex gap-1 bg-[#E2E6EF] rounded-2xl p-1">
+      <div className="flex gap-1 bg-[#E2E6EF] dark:bg-[#1C2438] rounded-2xl p-1">
         {(['chats', 'notifications'] as const).map((tab) => {
           const badge = tab === 'chats' ? unreadChats : unreadNotifs;
           const label = tab === 'chats' ? 'Сообщения' : 'Уведомления';
@@ -116,7 +116,7 @@ export default function ActivityPage() {
               key={tab}
               onClick={() => setActiveTab(tab)}
               className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-sm font-semibold transition-all ${
-                activeTab === tab ? 'bg-white text-[#1F2A44] shadow-sm' : 'text-[#9AA3B8]'
+                activeTab === tab ? 'bg-white dark:bg-[#161C2A] text-[#1F2A44] dark:text-[#E4EAF5] shadow-sm' : 'text-[#9AA3B8]'
               }`}
             >
               {label}
@@ -133,7 +133,7 @@ export default function ActivityPage() {
       {/* Чаты */}
       {activeTab === 'chats' && (
         <section>
-          <span className="text-base font-bold text-[#1F2A44] block mb-3">Сообщения</span>
+          <span className="text-base font-bold text-[#1F2A44] dark:text-[#E4EAF5] block mb-3">Сообщения</span>
 
           {loadingChats ? (
             <p className="text-sm text-[#9AA3B8] text-center py-8">Загрузка...</p>
@@ -143,14 +143,14 @@ export default function ActivityPage() {
               <span className="text-sm text-[#9AA3B8]">Нет сообщений</span>
             </div>
           ) : (
-            <div className="bg-[#EDEFF3] rounded-2xl overflow-hidden">
+            <div className="bg-[#EDEFF3] dark:bg-[#161C2A] rounded-2xl overflow-hidden">
               {chats.map((chat, i) => (
                 <div key={chat.partner.id}>
                   <Link href={`/activity/chat/${chat.partner.id}`}>
                     <div className="flex items-center gap-3 px-4 py-3">
                       <Avatar name={chat.partner.name} avatar={chat.partner.avatar} size={10} />
                       <div className="flex-1 min-w-0">
-                        <span className="text-sm font-semibold text-[#1F2A44] block">{chat.partner.name}</span>
+                        <span className="text-sm font-semibold text-[#1F2A44] dark:text-[#E4EAF5] block">{chat.partner.name}</span>
                         <span className="text-xs text-[#9AA3B8] truncate block">
                           {chat.last_message
                             ? (chat.last_message.is_mine ? 'Вы: ' : '') + (chat.last_message.text || '📷 Фото')
@@ -171,7 +171,7 @@ export default function ActivityPage() {
                       </div>
                     </div>
                   </Link>
-                  {i < chats.length - 1 && <div className="h-px bg-[#DDE3EC] mx-4" />}
+                  {i < chats.length - 1 && <div className="h-px bg-[#DDE3EC] dark:bg-[#252F45] mx-4" />}
                 </div>
               ))}
             </div>
@@ -183,7 +183,7 @@ export default function ActivityPage() {
       {activeTab === 'notifications' && (
         <section>
           <div className="flex items-center justify-between mb-3">
-            <span className="text-base font-bold text-[#1F2A44]">Уведомления</span>
+            <span className="text-base font-bold text-[#1F2A44] dark:text-[#E4EAF5]">Уведомления</span>
             {unreadNotifs > 0 && (
               <button onClick={markAllRead} className="text-xs text-[#9AA3B8]">
                 Прочитать все
@@ -199,10 +199,10 @@ export default function ActivityPage() {
               <span className="text-sm text-[#9AA3B8]">Нет уведомлений</span>
             </div>
           ) : (
-            <div className="bg-[#EDEFF3] rounded-2xl overflow-hidden">
+            <div className="bg-[#EDEFF3] dark:bg-[#161C2A] rounded-2xl overflow-hidden">
               {notifs.map((n, i) => {
                 const inner = (
-                  <div className={`flex items-center gap-3 px-4 py-3 ${!n.is_read ? 'bg-[#E6EAF2]' : ''}`}>
+                  <div className={`flex items-center gap-3 px-4 py-3 ${!n.is_read ? 'bg-[#E6EAF2] dark:bg-[#1C2438]' : ''}`}>
                     <div className="relative shrink-0">
                       <Avatar name={n.actor.name} avatar={n.actor.avatar} size={10} />
                       <div className={`absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full flex items-center justify-center ${n.type === 'like' ? 'bg-[#B06B8A]' : n.type === 'comment' ? 'bg-[#6B7FA8]' : 'bg-[#7A9E7E]'}`}>
@@ -222,7 +222,7 @@ export default function ActivityPage() {
                       </div>
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm text-[#1F2A44] leading-snug">
+                      <p className="text-sm text-[#1F2A44] dark:text-[#E4EAF5] leading-snug">
                         <span className="font-semibold">{n.actor.name}</span>
                         {notifText(n)}
                         {n.post_text && <span className="text-[#9AA3B8]"> «{n.post_text}»</span>}
@@ -242,7 +242,7 @@ export default function ActivityPage() {
                     ) : (
                       <Link href={`/profile/${n.actor.id}`}>{inner}</Link>
                     )}
-                    {i < notifs.length - 1 && <div className="h-px bg-[#DDE3EC] mx-4" />}
+                    {i < notifs.length - 1 && <div className="h-px bg-[#DDE3EC] dark:bg-[#252F45] mx-4" />}
                   </div>
                 );
               })}

@@ -91,11 +91,11 @@ export default function PostCard({ post, onDelete }: { post: Post; onDelete?: (i
 
   return (
     <>
-      <div className="w-full bg-[#EDEFF3] rounded-2xl shadow-sm overflow-hidden relative">
+      <div className="w-full bg-[#EDEFF3] dark:bg-[#161C2A] rounded-2xl shadow-sm overflow-hidden relative">
 
         {/* Шапка */}
         <div className="flex items-center gap-3 px-4 pt-4 pb-3">
-          <div className="w-10 h-10 rounded-full bg-[#C5CEDC] flex items-center justify-center shrink-0 overflow-hidden">
+          <div className="w-10 h-10 rounded-full bg-[#C5CEDC] dark:bg-[#252F45] flex items-center justify-center shrink-0 overflow-hidden">
             {post.author.avatarUrl ? (
               <Image src={post.author.avatarUrl} alt={post.author.name} width={40} height={40} className="object-cover" />
             ) : (
@@ -103,7 +103,7 @@ export default function PostCard({ post, onDelete }: { post: Post; onDelete?: (i
             )}
           </div>
           <Link href={isMyPost ? '/profile' : `/profile/${post.author.id}`} className="flex flex-col flex-1 min-w-0">
-            <span className="text-sm font-semibold text-[#1F2A44] leading-tight">{post.author.name}</span>
+            <span className="text-sm font-semibold text-[#1F2A44] dark:text-[#E4EAF5] leading-tight">{post.author.name}</span>
             <span className="text-xs text-[#9AA3B8]">{timeAgo}</span>
           </Link>
           <button className="p-1 relative" onClick={() => setMenuOpen(!menuOpen)}>
@@ -115,22 +115,22 @@ export default function PostCard({ post, onDelete }: { post: Post; onDelete?: (i
         {menuOpen && (
           <>
             <div className="fixed inset-0 z-10" onClick={() => setMenuOpen(false)} />
-            <div className="absolute top-12 right-4 z-20 bg-white rounded-2xl shadow-lg overflow-hidden min-w-[180px]">
+            <div className="absolute top-12 right-4 z-20 bg-white dark:bg-[#1C2438] rounded-2xl shadow-lg overflow-hidden min-w-[180px]">
               {isMyPost ? (
                 <>
-                  <button className="w-full text-left px-4 py-3 text-sm text-[#1F2A44] hover:bg-[#F3F6FC]" onClick={openEdit}>
+                  <button className="w-full text-left px-4 py-3 text-sm text-[#1F2A44] dark:text-[#E4EAF5] hover:bg-[#F3F6FC] dark:hover:bg-[#252F45]" onClick={openEdit}>
                     Редактировать
                   </button>
-                  <div className="h-px bg-[#EDEFF3]" />
-                  <button className="w-full text-left px-4 py-3 text-sm text-red-400 hover:bg-[#F3F6FC] disabled:opacity-40" onClick={handleDelete} disabled={deleting}>
+                  <div className="h-px bg-[#EDEFF3] dark:bg-[#252F45]" />
+                  <button className="w-full text-left px-4 py-3 text-sm text-red-400 hover:bg-[#F3F6FC] dark:hover:bg-[#252F45] disabled:opacity-40" onClick={handleDelete} disabled={deleting}>
                     {deleting ? 'Удаление...' : 'Удалить пост'}
                   </button>
                 </>
               ) : (
                 <>
-                  <button className="w-full text-left px-4 py-3 text-sm text-[#1F2A44] hover:bg-[#F3F6FC]" onClick={() => setMenuOpen(false)}>Скрыть пост</button>
-                  <div className="h-px bg-[#EDEFF3]" />
-                  <button className="w-full text-left px-4 py-3 text-sm text-red-400 hover:bg-[#F3F6FC]" onClick={() => setMenuOpen(false)}>Пожаловаться</button>
+                  <button className="w-full text-left px-4 py-3 text-sm text-[#1F2A44] dark:text-[#E4EAF5] hover:bg-[#F3F6FC] dark:hover:bg-[#252F45]" onClick={() => setMenuOpen(false)}>Скрыть пост</button>
+                  <div className="h-px bg-[#EDEFF3] dark:bg-[#252F45]" />
+                  <button className="w-full text-left px-4 py-3 text-sm text-red-400 hover:bg-[#F3F6FC] dark:hover:bg-[#252F45]" onClick={() => setMenuOpen(false)}>Пожаловаться</button>
                 </>
               )}
             </div>
@@ -157,7 +157,7 @@ export default function PostCard({ post, onDelete }: { post: Post; onDelete?: (i
 
         {/* Текст */}
         <div className="px-4 pt-2 pb-2">
-          <p className="text-sm text-[#3D4860] leading-relaxed">{currentText}</p>
+          <p className="text-sm text-[#3D4860] dark:text-[#B8C4D4] leading-relaxed">{currentText}</p>
         </div>
 
         {/* Действия */}
@@ -180,13 +180,13 @@ export default function PostCard({ post, onDelete }: { post: Post; onDelete?: (i
       {editOpen && (
         <>
           <div className="fixed inset-0 z-40 bg-black/40" onClick={() => setEditOpen(false)} />
-          <div className="fixed bottom-0 inset-x-0 max-w-sm mx-auto z-50 bg-white rounded-t-2xl flex flex-col">
+          <div className="fixed bottom-0 inset-x-0 max-w-sm mx-auto z-50 bg-white dark:bg-[#161C2A] rounded-t-2xl flex flex-col">
             <div className="flex justify-center pt-3 pb-1 shrink-0">
               <div className="w-10 h-1 rounded-full bg-[#DDE3EC]" />
             </div>
-            <div className="flex items-center justify-between px-4 py-3 border-b border-[#DDE3EC]">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-[#DDE3EC] dark:border-[#252F45]">
               <button onClick={() => setEditOpen(false)} className="text-sm text-[#9AA3B8]">Отмена</button>
-              <span className="text-base font-bold text-[#1F2A44]">Редактировать пост</span>
+              <span className="text-base font-bold text-[#1F2A44] dark:text-[#E4EAF5]">Редактировать пост</span>
               <button onClick={saveEdit} disabled={saving || !editText.trim()} className="text-sm font-bold text-[#6B7FA8] disabled:opacity-40">
                 {saving ? '...' : 'Готово'}
               </button>
@@ -197,7 +197,7 @@ export default function PostCard({ post, onDelete }: { post: Post; onDelete?: (i
                 onChange={(e) => setEditText(e.target.value)}
                 maxLength={500}
                 rows={4}
-                className="w-full bg-[#F3F6FC] rounded-xl px-4 py-3 text-sm text-[#1F2A44] outline-none resize-none leading-relaxed"
+                className="w-full bg-[#F3F6FC] dark:bg-[#1C2438] rounded-xl px-4 py-3 text-sm text-[#1F2A44] dark:text-[#E4EAF5] outline-none resize-none leading-relaxed"
               />
               <div className="flex flex-wrap gap-2">
                 {MOODS.map((mood) => {
@@ -206,7 +206,7 @@ export default function PostCard({ post, onDelete }: { post: Post; onDelete?: (i
                     <button
                       key={mood}
                       onClick={() => setEditMoods(active ? editMoods.filter((m) => m !== mood) : [...editMoods, mood])}
-                      className="text-xs font-semibold px-3 py-1 rounded-full border transition-all"
+                      className={`text-xs font-semibold px-3 py-1 rounded-full border transition-all${active ? '' : ' dark:border-[#252F45]'}`}
                       style={active ? { background: MOOD_COLORS[mood], color: 'white', borderColor: 'transparent' } : { background: 'transparent', color: '#9AA3B8', borderColor: '#DDE3EC' }}
                     >
                       {mood}

@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { formatDistanceToNow } from 'date-fns';
 import { ru } from 'date-fns/locale';
+import RichText from './RichText';
 
 const MOODS = ['спокойствие', 'радость', 'грусть', 'тревога', 'злость', 'любовь'];
 const MOOD_COLORS: Record<string, string> = {
@@ -157,7 +158,7 @@ export default function PostCard({ post, onDelete }: { post: Post; onDelete?: (i
 
         {/* Текст */}
         <div className="px-4 pt-2 pb-2">
-          <p className="text-sm text-[#3D4860] dark:text-[#B8C4D4] leading-relaxed">{currentText}</p>
+          <RichText text={currentText} className="text-sm text-[#3D4860] dark:text-[#B8C4D4] leading-relaxed" />
         </div>
 
         {/* Действия */}

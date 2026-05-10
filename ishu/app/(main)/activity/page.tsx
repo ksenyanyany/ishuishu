@@ -16,7 +16,7 @@ function initials(name: string) {
   return name.split(' ').map((w) => w[0]).join('').toUpperCase().slice(0, 2) || '?';
 }
 
-type NotifType = 'like' | 'comment' | 'follow';
+type NotifType = 'like' | 'comment' | 'follow' | 'reply' | 'mention';
 
 type Notif = {
   id: number;
@@ -99,6 +99,8 @@ export default function ActivityPage() {
   function notifText(n: Notif) {
     if (n.type === 'like') return ' лайкнул(а) ваш пост';
     if (n.type === 'comment') return ' прокомментировал(а) ваш пост';
+    if (n.type === 'reply') return ' ответил(а) на ваш комментарий';
+    if (n.type === 'mention') return ' упомянул(а) вас';
     return ' подписался(ась) на вас';
   }
 

@@ -37,7 +37,7 @@ function mapComment(raw: any): Comment {
   return {
     id: String(raw.id),
     authorId: String(raw.author.id),
-    author: { name, initials, avatarUrl: raw.author.avatar || undefined },
+    author: { name, initials, avatarUrl: raw.author.avatar || undefined, handle: raw.author.handle || undefined },
     createdAt: new Date(raw.created_at),
     text: raw.text,
     images: raw.image ? [raw.image] : undefined,
@@ -54,7 +54,7 @@ export default function PostPage() {
   const [post, setPost] = useState<Post | null>(null);
   const [comments, setComments] = useState<Comment[]>([]);
   const [loading, setLoading] = useState(true);
-  const [replyTo, setReplyTo] = useState<{ name: string; text: string; parentId: string } | null>(null);
+  const [replyTo, setReplyTo] = useState<{ name: string; handle?: string; text: string; parentId: string } | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -100,9 +100,12 @@ export default function PostPage() {
   }
 
   function handleReply(comment: Comment) {
-    // Find the top-level parent id
-    const topId = comment.id;
-    setReplyTo({ name: comment.author.name, text: comment.text, parentId: topId });
+    setReplyTo({
+      name: comment.author.name,
+      handle: comment.author.handle,
+      text: comment.text,
+      parentId: comment.id,
+    });
   }
 
   if (loading) {

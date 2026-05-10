@@ -51,9 +51,19 @@ def _profile_data(profile, viewer=None):
 def _author(user):
     try:
         p = user.profile
-        return {'id': user.id, 'name': p.name, 'avatar': p.avatar}
+        return {'id': user.id, 'name': p.name, 'avatar': p.avatar, 'handle': p.handle}
     except UserProfile.DoesNotExist:
-        return {'id': user.id, 'name': user.username, 'avatar': ''}
+        return {'id': user.id, 'name': user.username, 'avatar': '', 'handle': ''}
+
+
+def _parse_mentions(text):
+    """Return UserProfile queryset for @handles found in text."""
+    handles = re.findall(r'@(\w+)', text)
+    if not handles:
+        return UserProfile.objects.none()
+    return UserProfile.objects.filter(
+        handle__in=[f'@{h}' for h in handles]
+    ).select_related('user')
 
 
 def _post_data(post, viewer=None):
@@ -201,6 +211,17 @@ def user_profile(request, user_id):
     return Response(_profile_data(profile, viewer=request.user))
 
 
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def profile_by_handle(request, handle):
+    try:
+        profile = UserProfile.objects.get(handle=f'@{handle}')
+    except UserProfile.DoesNotExist:
+        return Response({'error': 'Пользователь не найден'}, status=404)
+    return Response({'id': profile.user_id})
+
+
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -286,6 +307,13 @@ def posts_list(request):
         moods=request.data.get('moods', []),
         image=request.data.get('image', ''),
     )
+
+    for profile in _parse_mentions(text):
+        if profile.user != request.user:
+            Notification.objects.create(
+                recipient=profile.user, actor=request.user, type='mention', post=post
+            )
+
     return Response(_post_data(post, viewer=request.user), status=201)
 
 
@@ -398,10 +426,29 @@ def post_comments(request, post_id):
 
     comment = Comment.objects.create(post=post, author=request.user, text=text, image=image, parent=parent)
 
-    if post.author != request.user:
+    notified = set()
+
+    if parent:
+        # Notify the parent comment's author: "ответил на ваш комментарий"
+        if parent.author != request.user:
+            Notification.objects.create(
+                recipient=parent.author, actor=request.user, type='reply', post=post
+            )
+            notified.add(parent.author_id)
+    elif post.author != request.user:
+        # Notify post author: "прокомментировал ваш пост"
         Notification.objects.create(
             recipient=post.author, actor=request.user, type='comment', post=post
         )
+        notified.add(post.author_id)
+
+    # Notify @mentioned users
+    for profile in _parse_mentions(text):
+        if profile.user != request.user and profile.user_id not in notified:
+            Notification.objects.create(
+                recipient=profile.user, actor=request.user, type='mention', post=post
+            )
+            notified.add(profile.user_id)
 
     return Response(_comment_data(comment, viewer=request.user), status=201)
 

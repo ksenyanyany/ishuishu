@@ -5,6 +5,7 @@ import Image from 'next/image';
 
 type ReplyTo = {
   name: string;
+  handle?: string;
   text: string;
 };
 
@@ -41,7 +42,8 @@ export default function CommentInput({ onSubmit, replyTo, onCancelReply }: Props
 
   function handleSend() {
     if (!text.trim() && images.length === 0) return;
-    const finalText = text.trim();
+    const mention = replyTo?.handle ? replyTo.handle : replyTo ? `@${replyTo.name}` : '';
+    const finalText = replyTo ? `${mention} ${text.trim()}`.trim() : text.trim();
     onSubmit(finalText, images);
     setText('');
     setImages([]);

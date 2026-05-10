@@ -62,7 +62,7 @@ class Message(models.Model):
 
 
 class Notification(models.Model):
-    TYPE_CHOICES = [('like', 'Like'), ('comment', 'Comment'), ('follow', 'Follow')]
+    TYPE_CHOICES = [('like', 'Like'), ('comment', 'Comment'), ('follow', 'Follow'), ('reply', 'Reply'), ('mention', 'Mention')]
     recipient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications')
     actor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='caused_notifications')
     type = models.CharField(max_length=10, choices=TYPE_CHOICES)

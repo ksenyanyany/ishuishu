@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { formatDistanceToNow } from 'date-fns';
 import { ru } from 'date-fns/locale';
 import { useState } from 'react';
+import RichText from './RichText';
 
 export type Comment = {
   id: string;
@@ -12,6 +13,7 @@ export type Comment = {
     name: string;
     initials: string;
     avatarUrl?: string;
+    handle?: string;
   };
   createdAt: Date;
   text: string;
@@ -80,7 +82,7 @@ function CommentBody({
             </div>
 
             {comment.text && (
-              <p className="text-sm text-[#3D4860] dark:text-[#B8C4D4] leading-relaxed">{comment.text}</p>
+              <RichText text={comment.text} className="text-sm text-[#3D4860] dark:text-[#B8C4D4] leading-relaxed" />
             )}
 
             {comment.images && comment.images.length > 0 && (

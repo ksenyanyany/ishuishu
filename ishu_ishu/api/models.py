@@ -33,6 +33,7 @@ class Post(models.Model):
 class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comments')
+    parent = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='replies')
     text = models.TextField(max_length=500, blank=True)
     image = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)

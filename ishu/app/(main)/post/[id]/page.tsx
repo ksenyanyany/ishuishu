@@ -43,6 +43,7 @@ function mapComment(raw: any): Comment {
     images: raw.image ? [raw.image] : undefined,
     likesCount: raw.likes_count,
     isLiked: raw.is_liked,
+    replies: raw.replies ? raw.replies.map(mapComment) : [],
   };
 }
 
@@ -53,7 +54,7 @@ export default function PostPage() {
   const [post, setPost] = useState<Post | null>(null);
   const [comments, setComments] = useState<Comment[]>([]);
   const [loading, setLoading] = useState(true);
-  const [replyTo, setReplyTo] = useState<{ name: string; text: string } | null>(null);
+  const [replyTo, setReplyTo] = useState<{ name: string; text: string; parentId: string } | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -72,20 +73,36 @@ export default function PostPage() {
   useEffect(() => { load(); }, [load]);
 
   async function handleNewComment(text: string, images: string[]) {
+    const body: Record<string, string | number> = { text, image: images[0] ?? '' };
+    if (replyTo?.parentId) body.parent_id = replyTo.parentId;
+
     const res = await fetch(`${API}/api/posts/${id}/comments/`, {
       method: 'POST',
       headers: authHeaders(),
-      body: JSON.stringify({ text, image: images[0] ?? '' }),
+      body: JSON.stringify(body),
     });
     if (res.ok) {
       const data = await res.json();
-      setComments((prev) => [...prev, mapComment(data)]);
+      const newComment = mapComment(data);
+      if (replyTo?.parentId) {
+        setComments((prev) => prev.map((c) => {
+          // Direct top-level match
+          if (c.id === replyTo.parentId) return { ...c, replies: [...(c.replies ?? []), newComment] };
+          // Replying to a reply — add to that reply's top-level parent
+          if (c.replies?.some((r) => r.id === replyTo.parentId)) return { ...c, replies: [...(c.replies ?? []), newComment] };
+          return c;
+        }));
+      } else {
+        setComments((prev) => [...prev, newComment]);
+      }
       setPost((p) => p ? { ...p, commentsCount: p.commentsCount + 1 } : p);
     }
   }
 
   function handleReply(comment: Comment) {
-    setReplyTo({ name: comment.author.name, text: comment.text });
+    // Find the top-level parent id
+    const topId = comment.id;
+    setReplyTo({ name: comment.author.name, text: comment.text, parentId: topId });
   }
 
   if (loading) {

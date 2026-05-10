@@ -41,7 +41,7 @@ export default function CommentInput({ onSubmit, replyTo, onCancelReply }: Props
 
   function handleSend() {
     if (!text.trim() && images.length === 0) return;
-    const finalText = replyTo ? `@${replyTo.name} ${text.trim()}` : text.trim();
+    const finalText = text.trim();
     onSubmit(finalText, images);
     setText('');
     setImages([]);

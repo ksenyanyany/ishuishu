@@ -71,9 +71,9 @@ def _post_data(post, viewer=None):
     }
 
 
-def _comment_data(comment, viewer=None):
+def _comment_data(comment, viewer=None, include_replies=False):
     is_liked = comment.likes.filter(id=viewer.id).exists() if viewer else False
-    return {
+    data = {
         'id': comment.id,
         'author': _author(comment.author),
         'text': comment.text,
@@ -82,6 +82,13 @@ def _comment_data(comment, viewer=None):
         'likes_count': comment.likes.count(),
         'is_liked': is_liked,
     }
+    if include_replies:
+        replies = (comment.replies
+                   .select_related('author__profile')
+                   .prefetch_related('likes')
+                   .order_by('created_at'))
+        data['replies'] = [_comment_data(r, viewer=viewer) for r in replies]
+    return data
 
 
 def _message_data(msg, me):
@@ -368,17 +375,28 @@ def post_comments(request, post_id):
 
     if request.method == 'GET':
         comments = (post.comments
+                    .filter(parent=None)
                     .select_related('author__profile')
-                    .prefetch_related('likes')
+                    .prefetch_related('likes', 'replies__author__profile', 'replies__likes')
                     .order_by('created_at'))
-        return Response([_comment_data(c, viewer=request.user) for c in comments])
+        return Response([_comment_data(c, viewer=request.user, include_replies=True) for c in comments])
 
     text = request.data.get('text', '').strip()
     image = request.data.get('image', '')
     if not text and not image:
         return Response({'error': 'Комментарий не может быть пустым'}, status=400)
 
-    comment = Comment.objects.create(post=post, author=request.user, text=text, image=image)
+    parent_id = request.data.get('parent_id')
+    parent = None
+    if parent_id:
+        try:
+            parent_comment = Comment.objects.get(id=parent_id, post=post)
+            # Always reply to top-level (no deep nesting)
+            parent = parent_comment.parent or parent_comment
+        except Comment.DoesNotExist:
+            pass
+
+    comment = Comment.objects.create(post=post, author=request.user, text=text, image=image, parent=parent)
 
     if post.author != request.user:
         Notification.objects.create(

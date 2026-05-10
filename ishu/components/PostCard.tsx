@@ -26,6 +26,8 @@ export type Post = {
   isLiked?: boolean;
 };
 
+type ShareChat = { partner: { id: number; name: string; avatar: string } };
+
 function ImageGrid({ images, onOpen }: { images: string[]; onOpen: (src: string) => void }) {
   const count = images.length;
   if (count === 1) {
@@ -84,6 +86,12 @@ export default function PostCard({ post, onDelete }: { post: Post; onDelete?: (i
   const [currentMoods, setCurrentMoods] = useState<string[]>(post.moods);
   const [saving, setSaving] = useState(false);
   const [lightboxImg, setLightboxImg] = useState<string | null>(null);
+  const [shareOpen, setShareOpen] = useState(false);
+  const [shareCopied, setShareCopied] = useState(false);
+  const [shareStep, setShareStep] = useState<'main' | 'dm'>('main');
+  const [shareChats, setShareChats] = useState<ShareChat[]>([]);
+  const [shareLoading, setShareLoading] = useState(false);
+  const [shareSent, setShareSent] = useState<number | null>(null);
 
   const currentUserId = typeof window !== 'undefined' ? localStorage.getItem('user_id') ?? '' : '';
   const isMyPost = post.authorId === currentUserId;
@@ -133,6 +141,36 @@ export default function PostCard({ post, onDelete }: { post: Post; onDelete?: (i
       method: 'POST',
       headers: { Authorization: `Token ${token}` },
     });
+  }
+
+  function openShare() { setShareStep('main'); setShareOpen(true); }
+
+  async function handleShareCopy() {
+    await navigator.clipboard.writeText(`${window.location.origin}/post/${post.id}`);
+    setShareCopied(true);
+    setTimeout(() => { setShareCopied(false); setShareOpen(false); }, 1500);
+  }
+
+  async function openShareDM() {
+    setShareStep('dm');
+    setShareLoading(true);
+    const token = localStorage.getItem('token');
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/chats/`, {
+      headers: { Authorization: `Token ${token}` },
+    });
+    if (res.ok) setShareChats(await res.json());
+    setShareLoading(false);
+  }
+
+  async function sendToDM(partnerId: number) {
+    const token = localStorage.getItem('token');
+    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/chats/${partnerId}/`, {
+      method: 'POST',
+      headers: { Authorization: `Token ${token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: `${window.location.origin}/post/${post.id}`, image: '' }),
+    });
+    setShareSent(partnerId);
+    setTimeout(() => { setShareSent(null); setShareOpen(false); setShareStep('main'); setShareChats([]); }, 1200);
   }
 
   const timeAgo = formatDistanceToNow(new Date(post.createdAt), { addSuffix: true, locale: ru });
@@ -216,7 +254,7 @@ export default function PostCard({ post, onDelete }: { post: Post; onDelete?: (i
             <Image src="/icons/comment.svg" alt="комментарии" width={22} height={22} style={{ width: 'auto' }} />
             <span className="text-sm text-[#9AA3B8]">{post.commentsCount}</span>
           </Link>
-          <button className="ml-auto">
+          <button className="ml-auto" onClick={openShare}>
             <Image src="/icons/share.svg" alt="поделиться" width={22} height={22} style={{ width: 'auto' }} />
           </button>
         </div>
@@ -261,6 +299,86 @@ export default function PostCard({ post, onDelete }: { post: Post; onDelete?: (i
                 })}
               </div>
             </div>
+          </div>
+        </>
+      )}
+
+      {/* Share sheet */}
+      {shareOpen && (
+        <>
+          <div className="fixed inset-0 z-40 bg-black/40" onClick={() => { setShareOpen(false); setShareStep('main'); }} />
+          <div className="fixed bottom-0 inset-x-0 max-w-sm mx-auto z-50 bg-white dark:bg-[#161C2A] rounded-t-2xl flex flex-col">
+            <div className="flex justify-center pt-3 pb-1">
+              <div className="w-10 h-1 rounded-full bg-[#DDE3EC] dark:bg-[#252F45]" />
+            </div>
+            <div className="flex items-center justify-between px-4 py-3 border-b border-[#DDE3EC] dark:border-[#252F45]">
+              {shareStep === 'dm' ? (
+                <button onClick={() => setShareStep('main')} className="text-sm text-[#9AA3B8]">Назад</button>
+              ) : <div className="w-10" />}
+              <span className="text-base font-bold text-[#1F2A44] dark:text-[#E4EAF5]">
+                {shareStep === 'dm' ? 'Отправить' : 'Поделиться'}
+              </span>
+              <button onClick={() => { setShareOpen(false); setShareStep('main'); }} className="text-sm text-[#9AA3B8]">Закрыть</button>
+            </div>
+
+            {shareStep === 'main' ? (
+              <div className="px-4 py-3 flex flex-col gap-2 pb-10">
+                <button
+                  onClick={handleShareCopy}
+                  className="flex items-center gap-3 px-4 py-3 rounded-xl bg-[#F3F6FC] dark:bg-[#1C2438] active:opacity-70"
+                >
+                  <div className="w-9 h-9 rounded-full bg-[#E4EAF5] dark:bg-[#252F45] flex items-center justify-center shrink-0">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                      <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71" stroke="#6B7FA8" strokeWidth="2" strokeLinecap="round"/>
+                      <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71" stroke="#6B7FA8" strokeWidth="2" strokeLinecap="round"/>
+                    </svg>
+                  </div>
+                  <span className="text-sm font-semibold text-[#1F2A44] dark:text-[#E4EAF5]">
+                    {shareCopied ? 'Скопировано!' : 'Скопировать ссылку'}
+                  </span>
+                </button>
+                <button
+                  onClick={openShareDM}
+                  className="flex items-center gap-3 px-4 py-3 rounded-xl bg-[#F3F6FC] dark:bg-[#1C2438] active:opacity-70"
+                >
+                  <div className="w-9 h-9 rounded-full bg-[#E4EAF5] dark:bg-[#252F45] flex items-center justify-center shrink-0">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                      <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2v10z" stroke="#6B7FA8" strokeWidth="2" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
+                  <span className="text-sm font-semibold text-[#1F2A44] dark:text-[#E4EAF5]">Отправить в сообщение</span>
+                </button>
+              </div>
+            ) : (
+              <div className="flex flex-col pb-10 max-h-72 overflow-y-auto">
+                {shareLoading && <div className="text-sm text-[#9AA3B8] text-center py-8">Загрузка...</div>}
+                {!shareLoading && shareChats.length === 0 && (
+                  <div className="text-sm text-[#9AA3B8] text-center py-8">Нет диалогов</div>
+                )}
+                {shareChats.map((chat) => (
+                  <button
+                    key={chat.partner.id}
+                    onClick={() => sendToDM(chat.partner.id)}
+                    className="flex items-center gap-3 px-4 py-3 active:bg-[#F3F6FC] dark:active:bg-[#252F45]"
+                  >
+                    <div className="w-10 h-10 rounded-full bg-[#C5CEDC] dark:bg-[#252F45] flex items-center justify-center shrink-0 overflow-hidden">
+                      {chat.partner.avatar ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={chat.partner.avatar} alt={chat.partner.name} className="w-full h-full object-cover" />
+                      ) : (
+                        <span className="text-sm font-semibold text-[#4B5563]">
+                          {chat.partner.name.split(' ').map((w: string) => w[0]).join('').toUpperCase().slice(0, 2) || '?'}
+                        </span>
+                      )}
+                    </div>
+                    <span className="flex-1 text-left text-sm font-semibold text-[#1F2A44] dark:text-[#E4EAF5]">{chat.partner.name}</span>
+                    {shareSent === chat.partner.id && (
+                      <span className="text-xs text-[#6B7FA8] font-semibold">Отправлено ✓</span>
+                    )}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         </>
       )}

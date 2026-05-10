@@ -80,6 +80,9 @@ export default function ProfilePage() {
   const [userComments, setUserComments] = useState<UserComment[] | null>(null);
   const [tabLoading, setTabLoading] = useState(false);
 
+  const [profileShareOpen, setProfileShareOpen] = useState(false);
+  const [profileShareCopied, setProfileShareCopied] = useState(false);
+
   const [editOpen, setEditOpen] = useState(false);
   const [editName, setEditName] = useState('');
   const [editHandle, setEditHandle] = useState('');
@@ -249,12 +252,20 @@ export default function ProfilePage() {
           ) : (
             <div className="w-full h-full bg-gradient-to-br from-[#B8C4D8] to-[#8E9BB5]" />
           )}
-          <button
-            onClick={() => coverInputRef.current?.click()}
-            className="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/30 backdrop-blur-sm flex items-center justify-center"
-          >
-            <Image src="/icons/image.svg" alt="изменить обложку" width={16} height={16} style={{ width: 'auto' }} />
-          </button>
+          <div className="absolute top-3 right-3 flex items-center gap-2">
+            <button
+              onClick={() => setProfileShareOpen(true)}
+              className="w-8 h-8 rounded-full bg-black/30 backdrop-blur-sm flex items-center justify-center"
+            >
+              <Image src="/icons/share.svg" alt="поделиться профилем" width={16} height={16} style={{ width: 'auto' }} />
+            </button>
+            <button
+              onClick={() => coverInputRef.current?.click()}
+              className="w-8 h-8 rounded-full bg-black/30 backdrop-blur-sm flex items-center justify-center"
+            >
+              <Image src="/icons/image.svg" alt="изменить обложку" width={16} height={16} style={{ width: 'auto' }} />
+            </button>
+          </div>
         </div>
         <input ref={coverInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => handleFileSelect(e, 'cover')} />
       </div>
@@ -388,6 +399,43 @@ export default function ProfilePage() {
             <span className="text-sm text-[#9AA3B8]">Ответов пока нет</span>
           </div>
         )
+      )}
+
+      {/* Шторка поделиться профилем */}
+      {profileShareOpen && (
+        <>
+          <div className="fixed inset-0 z-40 bg-black/40" onClick={() => setProfileShareOpen(false)} />
+          <div className="fixed bottom-0 inset-x-0 max-w-sm mx-auto z-50 bg-white dark:bg-[#161C2A] rounded-t-2xl flex flex-col">
+            <div className="flex justify-center pt-3 pb-1">
+              <div className="w-10 h-1 rounded-full bg-[#DDE3EC] dark:bg-[#252F45]" />
+            </div>
+            <div className="flex items-center justify-between px-4 py-3 border-b border-[#DDE3EC] dark:border-[#252F45]">
+              <div className="w-10" />
+              <span className="text-base font-bold text-[#1F2A44] dark:text-[#E4EAF5]">Поделиться профилем</span>
+              <button onClick={() => setProfileShareOpen(false)} className="text-sm text-[#9AA3B8]">Закрыть</button>
+            </div>
+            <div className="px-4 py-3 pb-10">
+              <button
+                onClick={async () => {
+                  await navigator.clipboard.writeText(`${window.location.origin}/profile/${profile.id}`);
+                  setProfileShareCopied(true);
+                  setTimeout(() => { setProfileShareCopied(false); setProfileShareOpen(false); }, 1500);
+                }}
+                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-[#F3F6FC] dark:bg-[#1C2438] active:opacity-70"
+              >
+                <div className="w-9 h-9 rounded-full bg-[#E4EAF5] dark:bg-[#252F45] flex items-center justify-center shrink-0">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71" stroke="#6B7FA8" strokeWidth="2" strokeLinecap="round"/>
+                    <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71" stroke="#6B7FA8" strokeWidth="2" strokeLinecap="round"/>
+                  </svg>
+                </div>
+                <span className="text-sm font-semibold text-[#1F2A44] dark:text-[#E4EAF5]">
+                  {profileShareCopied ? 'Скопировано!' : 'Скопировать ссылку на профиль'}
+                </span>
+              </button>
+            </div>
+          </div>
+        </>
       )}
 
       {/* Шторка редактирования */}

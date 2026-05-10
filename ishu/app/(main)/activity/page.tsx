@@ -76,7 +76,17 @@ export default function ActivityPage() {
   }, []);
 
   useEffect(() => { loadChats(); }, [loadChats]);
-  useEffect(() => { loadNotifs(); }, [loadNotifs]);
+  useEffect(() => {
+    loadNotifs();
+  }, [loadNotifs]);
+
+  // Помечаем уведомления прочитанными когда открываем вкладку
+  useEffect(() => {
+    if (activeTab === 'notifications') {
+      fetch(`${API}/api/notifications/read/`, { method: 'POST', headers: authHeaders() });
+      setNotifs((prev) => prev.map((n) => ({ ...n, is_read: true })));
+    }
+  }, [activeTab]);
 
   async function markAllRead() {
     await fetch(`${API}/api/notifications/read/`, { method: 'POST', headers: authHeaders() });

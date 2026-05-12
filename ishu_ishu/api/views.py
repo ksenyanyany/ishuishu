@@ -52,7 +52,9 @@ def _profile_data(profile, viewer=None):
 def _author(user):
     try:
         p = user.profile
-        return {'id': user.id, 'name': p.name, 'avatar': p.avatar, 'handle': p.handle}
+        # Only return avatar if it's a URL (Supabase). Skip raw base64 to keep responses small.
+        avatar = p.avatar if p.avatar and p.avatar.startswith('http') else ''
+        return {'id': user.id, 'name': p.name, 'avatar': avatar, 'handle': p.handle}
     except UserProfile.DoesNotExist:
         return {'id': user.id, 'name': user.username, 'avatar': '', 'handle': ''}
 

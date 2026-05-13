@@ -647,3 +647,102 @@ def notifications_list(request):
 def notifications_read(request):
     Notification.objects.filter(recipient=request.user, is_read=False).update(is_read=True)
     return Response({'ok': True})
+
+
+# ── Admin ──────────────────────────────────────────────────────────────────────
+
+def _require_staff(request):
+    if not request.user.is_staff:
+        return Response({'error': 'forbidden'}, status=403)
+    return None
+
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def admin_users(request):
+    err = _require_staff(request)
+    if err: return err
+    users = User.objects.select_related('profile').order_by('-date_joined')
+    data = []
+    for u in users:
+        try:
+            p = u.profile
+            name, handle, avatar = p.name, p.handle, p.avatar if p.avatar and p.avatar.startswith('http') else ''
+        except Exception:
+            name, handle, avatar = u.username, '', ''
+        data.append({
+            'id': u.id, 'username': u.username, 'email': u.email,
+            'name': name, 'handle': handle, 'avatar': avatar,
+            'is_active': u.is_active, 'is_staff': u.is_staff,
+            'date_joined': u.date_joined.isoformat(),
+        })
+    return Response(data)
+
+
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def admin_ban_user(request, user_id):
+    err = _require_staff(request)
+    if err: return err
+    try:
+        u = User.objects.get(id=user_id)
+    except User.DoesNotExist:
+        return Response({'error': 'not found'}, status=404)
+    if u.is_staff:
+        return Response({'error': 'cannot ban staff'}, status=400)
+    u.is_active = not u.is_active
+    u.save()
+    return Response({'id': u.id, 'is_active': u.is_active})
+
+
+@api_view(['DELETE'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def admin_delete_user(request, user_id):
+    err = _require_staff(request)
+    if err: return err
+    try:
+        u = User.objects.get(id=user_id)
+    except User.DoesNotExist:
+        return Response({'error': 'not found'}, status=404)
+    if u.is_staff:
+        return Response({'error': 'cannot delete staff'}, status=400)
+    u.delete()
+    return Response({'ok': True})
+
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def admin_posts(request):
+    err = _require_staff(request)
+    if err: return err
+    posts = Post.objects.select_related('author__profile').order_by('-created_at')[:200]
+    data = []
+    for p in posts:
+        try:
+            handle = p.author.profile.handle
+        except Exception:
+            handle = p.author.username
+        data.append({
+            'id': p.id, 'text': p.text[:200], 'handle': handle,
+            'author_id': p.author_id, 'created_at': p.created_at.isoformat(),
+            'likes': p.likes.count(), 'comments': p.comments.count(),
+        })
+    return Response(data)
+
+
+@api_view(['DELETE'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def admin_delete_post(request, post_id):
+    err = _require_staff(request)
+    if err: return err
+    try:
+        p = Post.objects.get(id=post_id)
+    except Post.DoesNotExist:
+        return Response({'error': 'not found'}, status=404)
+    p.delete()
+    return Response({'ok': True})

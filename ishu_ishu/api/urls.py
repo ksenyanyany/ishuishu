@@ -6,6 +6,7 @@ from .views import (
     search,
     chats_list, chat_messages, chat_read,
     notifications_list, notifications_read,
+    admin_users, admin_ban_user, admin_delete_user, admin_posts, admin_delete_post,
 )
 
 urlpatterns = [
@@ -32,4 +33,9 @@ urlpatterns = [
     path('chats/<int:user_id>/read/', chat_read),
     path('notifications/', notifications_list),
     path('notifications/read/', notifications_read),
+    path('admin-api/users/', admin_users),
+    path('admin-api/users/<int:user_id>/ban/', admin_ban_user),
+    path('admin-api/users/<int:user_id>/delete/', admin_delete_user),
+    path('admin-api/posts/', admin_posts),
+    path('admin-api/posts/<int:post_id>/delete/', admin_delete_post),
 ]

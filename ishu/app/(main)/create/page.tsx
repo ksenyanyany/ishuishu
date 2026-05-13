@@ -129,7 +129,8 @@ export default function CreatePage() {
       <div className="flex gap-3 mb-4 flex-wrap">
         {images.map((src, index) => (
           <div key={index} className="relative w-20 h-20 rounded-xl overflow-hidden shrink-0">
-            <Image src={src} alt="фото" fill className="object-cover" />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={src} alt="фото" className="w-full h-full object-cover" />
             <button
               onClick={() => removeImage(index)}
               className="absolute top-1 right-1 w-5 h-5 rounded-full bg-black/40 flex items-center justify-center"

@@ -1,5 +1,7 @@
 import re
 import json
+import base64
+import uuid
 from django.db.models import Q
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.authentication import TokenAuthentication
@@ -10,6 +12,35 @@ from django.http import JsonResponse
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from .models import UserProfile, Post, Comment, Message, Notification
+
+_SUPABASE_URL = "https://mycldqzdtuzsfztjnrva.supabase.co"
+_SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im15Y2xkcXpkdHV6c2Z6dGpucnZhIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3ODUyMjA1MSwiZXhwIjoyMDk0MDk4MDUxfQ.sYmoD83g2r6pmfKbrPbZlUqglJE7BRSpG2D1f6UlZVc"
+_supabase = None
+
+def _get_supabase():
+    global _supabase
+    if _supabase is None:
+        from supabase import create_client
+        _supabase = create_client(_SUPABASE_URL, _SUPABASE_KEY)
+    return _supabase
+
+def _upload_image(data_url, folder):
+    """Upload a base64 data URL to Supabase storage. Returns the public URL or the original value."""
+    if not data_url or data_url.startswith('http'):
+        return data_url
+    match = re.match(r'data:([^;]+);base64,(.+)', data_url, re.DOTALL)
+    if not match:
+        return data_url
+    mime = match.group(1)
+    ext = mime.split('/')[-1].replace('jpeg', 'jpg')
+    try:
+        file_bytes = base64.b64decode(match.group(2).strip())
+        path = f"{folder}/{uuid.uuid4()}.{ext}"
+        _get_supabase().storage.from_('media').upload(path, file_bytes, {"content-type": mime})
+        return f"{_SUPABASE_URL}/storage/v1/object/public/media/{path}"
+    except Exception as e:
+        print(f"Supabase upload error: {e}")
+        return data_url
 
 
 def home(request):
@@ -208,9 +239,9 @@ def my_profile(request):
     if 'bio' in data:
         profile.bio = data['bio'][:150]
     if 'avatar' in data:
-        profile.avatar = data['avatar']
+        profile.avatar = _upload_image(data['avatar'], 'avatars')
     if 'cover' in data:
-        profile.cover = data['cover']
+        profile.cover = _upload_image(data['cover'], 'covers')
 
     profile.save()
     return Response(_profile_data(profile))
@@ -316,7 +347,7 @@ def posts_list(request):
     text = request.data.get('text', '').strip()
     images = request.data.get('images', [])
     if isinstance(images, list):
-        images = [img for img in images if img][:4]
+        images = [_upload_image(img, 'posts') for img in images if img][:4]
     else:
         images = []
 
@@ -434,7 +465,7 @@ def post_comments(request, post_id):
         return Response([_comment_data(c, viewer=request.user, include_replies=True) for c in comments])
 
     text = request.data.get('text', '').strip()
-    image = request.data.get('image', '')
+    image = _upload_image(request.data.get('image', ''), 'comments')
     if not text and not image:
         return Response({'error': 'Комментарий не может быть пустым'}, status=400)
 
@@ -612,7 +643,7 @@ def chat_messages(request, user_id):
         return Response([_message_data(m, me) for m in msgs])
 
     text = request.data.get('text', '').strip()
-    image = request.data.get('image', '')
+    image = _upload_image(request.data.get('image', ''), 'messages')
     if not text and not image:
         return Response({'error': 'Сообщение не может быть пустым'}, status=400)
 

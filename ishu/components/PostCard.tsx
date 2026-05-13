@@ -32,8 +32,9 @@ function ImageGrid({ images, onOpen }: { images: string[]; onOpen: (src: string)
   const count = images.length;
   if (count === 1) {
     return (
-      <div className="w-full aspect-[4/3] relative cursor-pointer" onClick={() => onOpen(images[0])}>
-        <Image src={images[0]} alt="фото" fill className="object-cover" />
+      <div className="w-full aspect-[4/3] relative cursor-pointer overflow-hidden" onClick={() => onOpen(images[0])}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={images[0]} alt="фото" className="w-full h-full object-cover" />
       </div>
     );
   }
@@ -41,8 +42,9 @@ function ImageGrid({ images, onOpen }: { images: string[]; onOpen: (src: string)
     return (
       <div className="grid grid-cols-2 gap-0.5">
         {images.map((src, i) => (
-          <div key={i} className="aspect-square relative cursor-pointer" onClick={() => onOpen(src)}>
-            <Image src={src} alt="фото" fill className="object-cover" />
+          <div key={i} className="aspect-square relative cursor-pointer overflow-hidden" onClick={() => onOpen(src)}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={src} alt="фото" className="w-full h-full object-cover" />
           </div>
         ))}
       </div>
@@ -51,12 +53,14 @@ function ImageGrid({ images, onOpen }: { images: string[]; onOpen: (src: string)
   if (count === 3) {
     return (
       <div className="grid grid-cols-2 gap-0.5">
-        <div className="row-span-2 aspect-[3/4] relative cursor-pointer" onClick={() => onOpen(images[0])}>
-          <Image src={images[0]} alt="фото" fill className="object-cover" />
+        <div className="row-span-2 aspect-[3/4] relative cursor-pointer overflow-hidden" onClick={() => onOpen(images[0])}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={images[0]} alt="фото" className="w-full h-full object-cover" />
         </div>
         {images.slice(1).map((src, i) => (
-          <div key={i} className="aspect-[3/2] relative cursor-pointer" onClick={() => onOpen(src)}>
-            <Image src={src} alt="фото" fill className="object-cover" />
+          <div key={i} className="aspect-[3/2] relative cursor-pointer overflow-hidden" onClick={() => onOpen(src)}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={src} alt="фото" className="w-full h-full object-cover" />
           </div>
         ))}
       </div>
@@ -66,8 +70,9 @@ function ImageGrid({ images, onOpen }: { images: string[]; onOpen: (src: string)
   return (
     <div className="grid grid-cols-2 gap-0.5">
       {images.map((src, i) => (
-        <div key={i} className="aspect-square relative cursor-pointer" onClick={() => onOpen(src)}>
-          <Image src={src} alt="фото" fill className="object-cover" />
+        <div key={i} className="aspect-square relative cursor-pointer overflow-hidden" onClick={() => onOpen(src)}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={src} alt="фото" className="w-full h-full object-cover" />
         </div>
       ))}
     </div>

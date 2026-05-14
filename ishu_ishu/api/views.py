@@ -2,6 +2,7 @@ import re
 import json
 import base64
 import uuid
+import requests as _requests
 from django.db.models import Q
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.authentication import TokenAuthentication
@@ -15,38 +16,35 @@ from .models import UserProfile, Post, Comment, Message, Notification
 
 _SUPABASE_URL = "https://mycldqzdtuzsfztjnrva.supabase.co"
 _SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im15Y2xkcXpkdHV6c2Z6dGpucnZhIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3ODUyMjA1MSwiZXhwIjoyMDk0MDk4MDUxfQ.sYmoD83g2r6pmfKbrPbZlUqglJE7BRSpG2D1f6UlZVc"
-_supabase = None
-
-def _get_supabase():
-    global _supabase
-    if _supabase is None:
-        from supabase import create_client
-        _supabase = create_client(_SUPABASE_URL, _SUPABASE_KEY)
-    return _supabase
 
 def _upload_image(data_url, folder):
-    """Upload a base64 data URL to Supabase storage. Returns the public URL or the original value."""
-    print(f"[UPLOAD] called folder={folder} type={type(data_url).__name__} start={str(data_url)[:40]}")
+    """Upload a base64 data URL to Supabase via direct HTTP. Returns the public URL."""
     if not data_url or data_url.startswith('http'):
-        print(f"[UPLOAD] skip: empty or already http")
         return data_url
     match = re.match(r'data:([^;]+);base64,(.+)', data_url, re.DOTALL)
     if not match:
-        print(f"[UPLOAD] skip: regex no match")
         return data_url
     mime = match.group(1)
     ext = mime.split('/')[-1].replace('jpeg', 'jpg')
     try:
         file_bytes = base64.b64decode(match.group(2).strip())
         path = f"{folder}/{uuid.uuid4()}.{ext}"
-        print(f"[UPLOAD] uploading {len(file_bytes)} bytes as {path}")
-        _get_supabase().storage.from_('media').upload(path, file_bytes, {"content-type": mime})
-        url = f"{_SUPABASE_URL}/storage/v1/object/public/media/{path}"
-        print(f"[UPLOAD] success: {url}")
-        return url
+        resp = _requests.post(
+            f"{_SUPABASE_URL}/storage/v1/object/media/{path}",
+            headers={
+                'apikey': _SUPABASE_KEY,
+                'Authorization': f'Bearer {_SUPABASE_KEY}',
+                'Content-Type': mime,
+            },
+            data=file_bytes,
+            timeout=60,
+        )
+        if resp.status_code in (200, 201):
+            return f"{_SUPABASE_URL}/storage/v1/object/public/media/{path}"
+        print(f"[UPLOAD] HTTP {resp.status_code}: {resp.text[:200]}")
     except Exception as e:
         print(f"[UPLOAD] ERROR: {e}")
-        return data_url
+    return data_url
 
 
 def home(request):

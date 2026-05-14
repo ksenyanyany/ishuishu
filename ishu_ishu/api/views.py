@@ -101,16 +101,16 @@ def _parse_mentions(text):
 
 
 def _parse_images(raw):
-    """Return list of image URLs from stored value (JSON array or single URL)."""
+    """Return list of Supabase image URLs. Skips base64 data to keep responses small."""
     if not raw:
         return []
     try:
         parsed = json.loads(raw)
         if isinstance(parsed, list):
-            return parsed
+            return [img for img in parsed if img and img.startswith('http')]
     except (json.JSONDecodeError, ValueError):
         pass
-    return [raw]
+    return [raw] if raw.startswith('http') else []
 
 
 def _post_data(post, viewer=None):
@@ -134,7 +134,7 @@ def _comment_data(comment, viewer=None, include_replies=False):
         'id': comment.id,
         'author': _author(comment.author),
         'text': comment.text,
-        'image': comment.image,
+        'image': comment.image if comment.image and comment.image.startswith('http') else '',
         'created_at': comment.created_at.isoformat(),
         'likes_count': comment.likes.count(),
         'is_liked': is_liked,
@@ -152,7 +152,7 @@ def _message_data(msg, me):
     return {
         'id': msg.id,
         'text': msg.text,
-        'image': msg.image,
+        'image': msg.image if msg.image and msg.image.startswith('http') else '',
         'created_at': msg.created_at.isoformat(),
         'is_mine': msg.sender_id == me.id,
         'is_read': msg.is_read,
@@ -613,7 +613,7 @@ def chats_list(request):
             'partner': _author(partner),
             'last_message': {
                 'text': last_msg.text,
-                'image': last_msg.image,
+                'image': last_msg.image if last_msg.image and last_msg.image.startswith('http') else '',
                 'created_at': last_msg.created_at.isoformat(),
                 'is_mine': last_msg.sender_id == me.id,
             } if last_msg else None,

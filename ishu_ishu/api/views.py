@@ -26,20 +26,26 @@ def _get_supabase():
 
 def _upload_image(data_url, folder):
     """Upload a base64 data URL to Supabase storage. Returns the public URL or the original value."""
+    print(f"[UPLOAD] called folder={folder} type={type(data_url).__name__} start={str(data_url)[:40]}")
     if not data_url or data_url.startswith('http'):
+        print(f"[UPLOAD] skip: empty or already http")
         return data_url
     match = re.match(r'data:([^;]+);base64,(.+)', data_url, re.DOTALL)
     if not match:
+        print(f"[UPLOAD] skip: regex no match")
         return data_url
     mime = match.group(1)
     ext = mime.split('/')[-1].replace('jpeg', 'jpg')
     try:
         file_bytes = base64.b64decode(match.group(2).strip())
         path = f"{folder}/{uuid.uuid4()}.{ext}"
+        print(f"[UPLOAD] uploading {len(file_bytes)} bytes as {path}")
         _get_supabase().storage.from_('media').upload(path, file_bytes, {"content-type": mime})
-        return f"{_SUPABASE_URL}/storage/v1/object/public/media/{path}"
+        url = f"{_SUPABASE_URL}/storage/v1/object/public/media/{path}"
+        print(f"[UPLOAD] success: {url}")
+        return url
     except Exception as e:
-        print(f"Supabase upload error: {e}")
+        print(f"[UPLOAD] ERROR: {e}")
         return data_url
 
 

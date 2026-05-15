@@ -88,8 +88,7 @@ def _author(user):
     try:
         p = user.profile
         # Only return avatar if it's a URL (Supabase). Skip raw base64 to keep responses small.
-        avatar = p.avatar if p.avatar and p.avatar.startswith('http') else ''
-        return {'id': user.id, 'name': p.name, 'avatar': avatar, 'handle': p.handle}
+        return {'id': user.id, 'name': p.name, 'avatar': p.avatar or '', 'handle': p.handle}
     except UserProfile.DoesNotExist:
         return {'id': user.id, 'name': user.username, 'avatar': '', 'handle': ''}
 
@@ -105,16 +104,16 @@ def _parse_mentions(text):
 
 
 def _parse_images(raw):
-    """Return list of Supabase image URLs. Skips base64 data to keep responses small."""
+    """Return list of image URLs/data from stored value."""
     if not raw:
         return []
     try:
         parsed = json.loads(raw)
         if isinstance(parsed, list):
-            return [img for img in parsed if img and img.startswith('http')]
+            return [img for img in parsed if img]
     except (json.JSONDecodeError, ValueError):
         pass
-    return [raw] if raw.startswith('http') else []
+    return [raw] if raw else []
 
 
 def _post_data(post, viewer=None):
@@ -243,9 +242,9 @@ def my_profile(request):
     if 'bio' in data:
         profile.bio = data['bio'][:150]
     if 'avatar' in data:
-        profile.avatar = _upload_image(data['avatar'], 'avatars')
+        profile.avatar = data['avatar']
     if 'cover' in data:
-        profile.cover = _upload_image(data['cover'], 'covers')
+        profile.cover = data['cover']
 
     profile.save()
     return Response(_profile_data(profile))
@@ -351,7 +350,7 @@ def posts_list(request):
     text = request.data.get('text', '').strip()
     images = request.data.get('images', [])
     if isinstance(images, list):
-        images = [_upload_image(img, 'posts') for img in images if img][:4]
+        images = [img for img in images if img][:4]
     else:
         images = []
 
@@ -469,7 +468,7 @@ def post_comments(request, post_id):
         return Response([_comment_data(c, viewer=request.user, include_replies=True) for c in comments])
 
     text = request.data.get('text', '').strip()
-    image = _upload_image(request.data.get('image', ''), 'comments')
+    image = request.data.get('image', '')
     if not text and not image:
         return Response({'error': 'Комментарий не может быть пустым'}, status=400)
 
@@ -647,7 +646,7 @@ def chat_messages(request, user_id):
         return Response([_message_data(m, me) for m in msgs])
 
     text = request.data.get('text', '').strip()
-    image = _upload_image(request.data.get('image', ''), 'messages')
+    image = request.data.get('image', '')
     if not text and not image:
         return Response({'error': 'Сообщение не может быть пустым'}, status=400)
 

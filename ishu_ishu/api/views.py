@@ -344,7 +344,7 @@ def posts_list(request):
             qs = qs.filter(author_id=author_id)
         if liked_by:
             qs = qs.filter(likes__id=liked_by)
-        posts = qs.order_by('-created_at')
+        posts = qs.order_by('-created_at')[:30]
         return Response([_post_data(p, viewer=request.user) for p in posts])
 
     text = request.data.get('text', '').strip()

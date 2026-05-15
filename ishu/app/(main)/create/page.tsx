@@ -13,11 +13,32 @@ const moods = [
   { label: 'любовь', color: '#C07090' },
 ];
 
+async function compressImage(dataUrl: string): Promise<string> {
+  return new Promise((resolve) => {
+    const img = new window.Image();
+    img.onload = () => {
+      const MAX = 1200;
+      let { width, height } = img;
+      if (width > MAX || height > MAX) {
+        if (width > height) { height = Math.round(height * MAX / width); width = MAX; }
+        else { width = Math.round(width * MAX / height); height = MAX; }
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      canvas.getContext('2d')!.drawImage(img, 0, 0, width, height);
+      resolve(canvas.toDataURL('image/jpeg', 0.78));
+    };
+    img.src = dataUrl;
+  });
+}
+
 export default function CreatePage() {
   const router = useRouter();
   const [text, setText] = useState('');
   const [selectedMoods, setSelectedMoods] = useState<string[]>([]);
   const [images, setImages] = useState<string[]>([]);
+  const [publishing, setPublishing] = useState(false);
 
   function toggleMood(label: string) {
     setSelectedMoods((prev) =>
@@ -31,7 +52,11 @@ export default function CreatePage() {
     const file = e.target.files?.[0];
     if (!file) return;
     const reader = new FileReader();
-    reader.onload = (ev) => setImages((prev) => prev.length < 4 ? [...prev, ev.target?.result as string] : prev);
+    reader.onload = async (ev) => {
+      const raw = ev.target?.result as string;
+      const compressed = await compressImage(raw);
+      setImages((prev) => prev.length < 4 ? [...prev, compressed] : prev);
+    };
     reader.readAsDataURL(file);
     e.target.value = '';
   }
@@ -41,14 +66,20 @@ export default function CreatePage() {
   }
 
   async function handlePublish() {
+    if (publishing) return;
     if (!text.trim() && images.length === 0) return;
-    const token = localStorage.getItem('token');
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/posts/`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Authorization: `Token ${token}` },
-      body: JSON.stringify({ text: text.trim(), moods: selectedMoods, images }),
-    });
-    if (res.ok) router.push('/feed');
+    setPublishing(true);
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/posts/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Token ${token}` },
+        body: JSON.stringify({ text: text.trim(), moods: selectedMoods, images }),
+      });
+      if (res.ok) router.push('/feed');
+    } finally {
+      setPublishing(false);
+    }
   }
 
   return (
@@ -65,9 +96,10 @@ export default function CreatePage() {
         <span className="text-base font-bold text-[#1F2A44] dark:text-[#E4EAF5]">Новый пост</span>
         <button
           onClick={handlePublish}
-          className="px-4 py-2 rounded-xl bg-[#8E9BB5] text-white text-sm font-bold"
+          disabled={publishing}
+          className="px-4 py-2 rounded-xl bg-[#8E9BB5] text-white text-sm font-bold disabled:opacity-60"
         >
-          Опубликовать
+          {publishing ? 'Публикую...' : 'Опубликовать'}
         </button>
       </div>
 
@@ -140,7 +172,6 @@ export default function CreatePage() {
           </div>
         ))}
 
-        {/* Кнопка добавить — только если меньше 4 фото */}
         {images.length < 4 && (
           <label className="w-20 h-20 rounded-xl border-2 border-dashed border-[#C5CEDC] dark:border-[#252F45] flex flex-col items-center justify-center gap-1 cursor-pointer shrink-0">
             <Image src="/icons/plus-gray.svg" alt="добавить" width={22} height={22} style={{ width: 'auto' }} />
